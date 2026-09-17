@@ -1,0 +1,87 @@
+# Step 6 case B: MULTIPLE CANDIDATE TAXA AT MIXED RANKS. Gold-leaf adhesive, mummy mask AEIN 656.
+# Source: Sargent et al. 2025, doi:10.1016/j.jasrep.2025.105106, results table (sample PR).
+# Reported: Equus sp., Sus scrofa, Hippopotamus amphibius, Bos mutus/taurus (Bovidae),
+# "large amount of fish peptides". Search: novor.cloud against its built-in nr.fasta.
+# Tests: database candidates stay candidates, each at the rank the source supports;
+# candidates are NOT marked competing, because one glue can mix several sources.
+
+@prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix crminf: <http://www.cidoc-crm.org/extensions/crminf/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix ncbi:   <http://purl.obolibrary.org/obo/NCBITaxon_> .
+@prefix s:      <https://codicum.eu/data/sargent-2025/> .
+
+s:AEIN656 a codhmo:HeritageObject ;
+    rdfs:label "Gilded mummy mask AEIN 656, Ny Carlsberg Glyptotek"@en ;
+    crm:P1_is_identified_by s:AEIN656-id ;
+    crm:P46_is_composed_of s:gilding-preparation , s:gold-leaf-adhesive .
+s:AEIN656-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "ÆIN 656" .
+
+s:gilding-preparation a codhmo:MaterialLayer ;
+    rdfs:label "Gilding preparation (reported: calcite + gypsum)"@en ;
+    crm:P45_consists_of codhmo:paste .
+s:gold-leaf-adhesive a codhmo:MaterialLayer ;
+    rdfs:label "Gold-leaf adhesive"@en ;
+    crm:P45_consists_of codhmo:gilding-adhesive .
+
+s:sampling-PR a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from s:gold-leaf-adhesive ;
+    crmsci:O4_sampled_at s:region-PR ;
+    crmsci:O5_removed s:PR ;
+    crm:P14_carried_out_by s:sargent-team ;
+    crm:P4_has_time-span s:before-capture .
+s:region-PR a crm:E53_Place ; rdfs:label "Proteomics sampling location PR (source Fig. 5)"@en .
+s:sargent-team a crm:E74_Group ; rdfs:label "Sargent et al. research team"@en ;
+    dcterms:source <https://doi.org/10.1016/j.jasrep.2025.105106> .
+s:before-capture a crm:E52_Time-Span ;
+    crm:P82b_end_of_the_end "2026-09-17T00:00:00"^^xsd:dateTime .
+
+s:PR a crmsci:S13_Sample ;
+    crm:P1_is_identified_by s:PR-id ;
+    crmsci:O5i_was_removed_by s:sampling-PR .
+s:PR-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "ÆIN 656 / PR" .
+
+# Search against an external database: no local DatabaseGeneration
+s:nr-fasta a codhmo:SearchDatabase ; rdfs:label "NCBI nr.fasta (novor.cloud built-in)"@en .
+s:novor a prov:SoftwareAgent ; rdfs:label "novor.cloud"@en ; dcterms:hasVersion "not reported" .
+s:search-PR a codhmo:DatabaseSearch ;
+    prov:used s:nr-fasta , s:PR ;
+    prov:wasAssociatedWith s:novor .
+
+s:taxon-report a codhmo:PeptideIdentification ;
+    rdfs:label "Peptide-to-taxon report for PR, as tabulated in the source"@en ;
+    prov:wasGeneratedBy s:search-PR ;
+    codhmo:compatibleWith s:T-equus , s:T-sus , s:T-hippo , s:T-bovidae .
+s:fish-report a codhmo:PeptideIdentification ;
+    rdfs:label "Large amount of fish peptides (taxon not specified in source)"@en ;
+    prov:wasGeneratedBy s:search-PR ;
+    codhmo:compatibleWith s:H-mixed-glue .
+
+# One taxonomic hypothesis per reported candidate, at the reported rank
+s:T-equus a codhmo:TaxonomicHypothesis ; rdfs:label "Equus sp. (genus)"@en ; crminf:J4_that s:p-equus .
+s:p-equus a crminf:I4_Proposition_Set ;
+    rdf:subject s:gold-leaf-adhesive ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9789 .
+s:T-sus a codhmo:TaxonomicHypothesis ; rdfs:label "Sus scrofa (species)"@en ; crminf:J4_that s:p-sus .
+s:p-sus a crminf:I4_Proposition_Set ;
+    rdf:subject s:gold-leaf-adhesive ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9823 .
+s:T-hippo a codhmo:TaxonomicHypothesis ; rdfs:label "Hippopotamus amphibius (species)"@en ; crminf:J4_that s:p-hippo .
+s:p-hippo a crminf:I4_Proposition_Set ;
+    rdf:subject s:gold-leaf-adhesive ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9833 .
+s:T-bovidae a codhmo:TaxonomicHypothesis ;
+    rdfs:label "Bovidae (family): source gives Bos mutus/taurus, species unresolved, so held at family"@en ;
+    crminf:J4_that s:p-bovidae .
+s:p-bovidae a crminf:I4_Proposition_Set ;
+    rdf:subject s:gold-leaf-adhesive ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9895 .
+
+s:H-mixed-glue a codhmo:ManufacturingHypothesis ;
+    rdfs:label "Adhesive is a mixed glue with fish and mammalian collagen"@en ;
+    crminf:J4_that s:p-mixed .
+s:p-mixed a crminf:I4_Proposition_Set ;
+    rdfs:label "The gold-leaf adhesive contains collagen from more than one animal source, including fish."@en .
+# Deliberately NO codhmo:hasCompetingHypothesis among the T-* candidates: sources may co-occur.

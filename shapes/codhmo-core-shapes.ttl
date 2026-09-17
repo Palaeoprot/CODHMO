@@ -57,12 +57,13 @@ shapes:SampleTakingShape a sh:NodeShape ;
 
 shapes:TimeSpanShape a sh:NodeShape ;
     sh:targetObjectsOf crm:P4_has_time-span ;
-    sh:property [
-        sh:path crm:P82a_begin_of_the_begin ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
-        sh:message "A time-span MUST give crm:P82a_begin_of_the_begin as xsd:dateTime." ] ;
-    sh:property [
-        sh:path crm:P82b_end_of_the_end ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
-        sh:message "A time-span MUST give crm:P82b_end_of_the_end as xsd:dateTime (equal to P82a for a known instant)." ] .
+    sh:or ( [ sh:path crm:P82a_begin_of_the_begin ; sh:minCount 1 ]
+            [ sh:path crm:P82b_end_of_the_end ; sh:minCount 1 ] ) ;
+    sh:message "A time-span MUST give at least one bound (crm:P82a and/or crm:P82b). A literature-derived sampling may carry only 'on or before' (P82b)." ;
+    sh:property [ sh:path crm:P82a_begin_of_the_begin ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
+        sh:message "crm:P82a MUST be a single xsd:dateTime." ] ;
+    sh:property [ sh:path crm:P82b_end_of_the_end ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
+        sh:message "crm:P82b MUST be a single xsd:dateTime." ] .
 
 # 4. Sample ---------------------------------------------------------------
 shapes:SampleShape a sh:NodeShape ;
@@ -150,3 +151,8 @@ shapes:NCBITaxonIdShape a sh:NodeShape ;
                 $this rdf:predicate codhmo:hasBiologicalSource ; rdf:object ?value .
                 FILTER (!isIRI(?value) || !REGEX(STR(?value), "^http://purl[.]obolibrary[.]org/obo/NCBITaxon_[0-9]+$"))
             }""" ] .
+
+shapes:ComponentRoleValueShape a sh:NodeShape ;
+    sh:targetObjectsOf codhmo:hasComponentRole ;
+    sh:property [ sh:path skos:inScheme ; sh:hasValue codhmo:ComponentRoleScheme ;
+        sh:message "Component roles MUST come from codhmo:ComponentRoleScheme." ] .

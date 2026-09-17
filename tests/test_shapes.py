@@ -108,3 +108,13 @@ def test_taxon_must_be_numeric_ncbi_iri(bad):
         format="turtle")
     conforms, _ = _validate(g)
     assert not conforms
+
+
+@pytest.mark.parametrize("name", ["kasso-2025-pakepu-white-paste", "sargent-2025-aein656-gold-leaf-adhesive",
+                                  "charter-illustrative"])
+def test_step6_examples_have_no_violations(name):
+    ont = Graph().parse(ROOT / "ontology" / "codhmo.ttl")
+    shapes = Graph().parse(ROOT / "shapes" / "codhmo-core-shapes.ttl")
+    data = Graph().parse(ROOT / "examples" / f"{name}.ttl")
+    conforms, _, text = validate(data + ont, shacl_graph=shapes, inference="rdfs", allow_warnings=True)
+    assert conforms, text

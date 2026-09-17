@@ -1,0 +1,57 @@
+# Step 6 case C: CHARTER. ILLUSTRATIVE, NOT A REAL RECORD.
+# C1: a charter with no scientific sample is valid on its own (handover §33, Priority 6).
+# C2: a sealed charter examined scientifically: parchment, ink and seal samples, no results yet.
+
+@prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix ch:     <https://codicum.eu/data/illustrative-charter/> .
+
+ch:type-charter a crm:E55_Type ; rdfs:label "charter"@en ;
+    rdfs:comment "Codicological type owned by CODICUM, not a CODHMO class (D3)."@en .
+
+ch:C1 a codhmo:HeritageObject ;
+    rdfs:label "ILLUSTRATIVE charter without sampling"@en ;
+    crm:P2_has_type ch:type-charter ;
+    crm:P1_is_identified_by ch:C1-id .
+ch:C1-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "ILLUSTRATIVE-C1" .
+
+ch:C2 a codhmo:HeritageObject ;
+    rdfs:label "ILLUSTRATIVE sealed charter, scientifically examined"@en ;
+    crm:P2_has_type ch:type-charter ;
+    crm:P1_is_identified_by ch:C2-id ;
+    crm:P46_is_composed_of ch:parchment-support , ch:ink-layer , ch:seal .
+ch:C2-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "ILLUSTRATIVE-C2" .
+
+ch:parchment-support a codhmo:MaterialLayer ; rdfs:label "Parchment support"@en ; crm:P45_consists_of codhmo:parchment .
+ch:ink-layer a codhmo:MaterialLayer ; rdfs:label "Ink of main text"@en ; crm:P45_consists_of codhmo:ink .
+ch:seal a codhmo:MaterialLayer ; rdfs:label "Pendant seal"@en ; crm:P45_consists_of ch:wax .
+ch:wax a crm:E57_Material ; rdfs:label "wax (seal), AAT match pending"@en .
+
+ch:examiner a crm:E21_Person ; rdfs:label "ILLUSTRATIVE examiner"@en .
+ch:exam-day a crm:E52_Time-Span ;
+    crm:P82a_begin_of_the_begin "2026-01-15T00:00:00"^^xsd:dateTime ;
+    crm:P82b_end_of_the_end "2026-01-15T23:59:59"^^xsd:dateTime .
+
+ch:sampling-parchment a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from ch:parchment-support ; crmsci:O4_sampled_at ch:region-parchment ; crmsci:O5_removed ch:S-parchment ;
+    crm:P14_carried_out_by ch:examiner ; crm:P4_has_time-span ch:exam-day .
+ch:sampling-ink a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from ch:ink-layer ; crmsci:O4_sampled_at ch:region-ink ; crmsci:O5_removed ch:S-ink ;
+    crm:P14_carried_out_by ch:examiner ; crm:P4_has_time-span ch:exam-day .
+ch:sampling-seal a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from ch:seal ; crmsci:O4_sampled_at ch:region-seal ; crmsci:O5_removed ch:S-seal ;
+    crm:P14_carried_out_by ch:examiner ; crm:P4_has_time-span ch:exam-day .
+
+ch:region-parchment a crm:E53_Place ; rdfs:label "ILLUSTRATIVE lower margin, recto"@en .
+ch:region-ink a crm:E53_Place ; rdfs:label "ILLUSTRATIVE letter stroke, line 3"@en .
+ch:region-seal a crm:E53_Place ; rdfs:label "ILLUSTRATIVE seal edge"@en .
+
+ch:S-parchment a crmsci:S13_Sample ; crm:P1_is_identified_by ch:S-parchment-id ; crmsci:O5i_was_removed_by ch:sampling-parchment .
+ch:S-ink a crmsci:S13_Sample ; crm:P1_is_identified_by ch:S-ink-id ; crmsci:O5i_was_removed_by ch:sampling-ink .
+ch:S-seal a crmsci:S13_Sample ; crm:P1_is_identified_by ch:S-seal-id ; crmsci:O5i_was_removed_by ch:sampling-seal .
+ch:S-parchment-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "ILLUSTRATIVE-C2-parchment" .
+ch:S-ink-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "ILLUSTRATIVE-C2-ink" .
+ch:S-seal-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "ILLUSTRATIVE-C2-seal" .

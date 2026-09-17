@@ -2,11 +2,12 @@
 from pathlib import Path
 
 import pytest
-from rdflib import Graph
+from rdflib import Graph, URIRef
 
 ROOT = Path(__file__).resolve().parents[1]
 PEPYS = "https://codicum.eu/data/pepys-2981/"
 NCBI = "http://purl.obolibrary.org/obo/NCBITaxon_"
+CODHMO = "https://codicum.eu/ontology/codhmo#"
 
 
 @pytest.fixture(scope="module")
@@ -64,3 +65,30 @@ def test_q10_database_generation(graph):
     (row,) = ask(graph, "q10")
     assert row[:3] == ("searchdb-1", "dbgen-1", "seqdb-gen")
     assert row[4].endswith("#Denatured")
+
+
+def load(name):
+    return Graph().parse(ROOT / "examples" / f"{name}.ttl")
+
+
+def test_mixed_ranks_stay_candidates_and_are_not_forced_to_compete():
+    g = load("sargent-2025-aein656-gold-leaf-adhesive")
+    assert {row[2].removeprefix(NCBI) for row in ask(g, "q04")} == {"9789", "9823", "9833", "9895"}
+    assert ask(g, "q05") == set()  # nothing asserted as fact
+    assert ask(g, "q06") == set()  # candidates may co-occur in a mixture
+
+
+def test_mixed_paste_has_bulk_and_binder_without_taxon():
+    g = load("kasso-2025-pakepu-white-paste")
+    roles = {str(o).rsplit("#", 1)[1] for o in g.objects(None, URIRef(CODHMO + "hasComponentRole"))}
+    assert roles == {"role-bulk", "role-binder"}
+    assert ask(g, "q04") == set() and ask(g, "q05") == set()
+
+
+def test_charter_samples_trace_to_their_layers():
+    base = "https://codicum.eu/data/illustrative-charter/"
+    assert ask(load("charter-illustrative"), "q01") == {
+        ("ILLUSTRATIVE-C2-parchment", base + "parchment-support"),
+        ("ILLUSTRATIVE-C2-ink", base + "ink-layer"),
+        ("ILLUSTRATIVE-C2-seal", base + "seal"),
+    }

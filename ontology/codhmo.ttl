@@ -234,3 +234,37 @@ codhmo:paper a skos:Concept, crm:E57_Material ;
 codhmo:ink a skos:Concept, crm:E57_Material ;
     skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
     skos:prefLabel "ink"@en .
+
+#################################################################
+# Formulations: component roles (added Step 6)
+#################################################################
+
+codhmo:hasComponentRole a owl:ObjectProperty ;
+    rdfs:label "has component role"@en ;
+    skos:definition "Relates a constituent material body to the role it plays in a formulation, drawn from codhmo:ComponentRoleScheme."@en ;
+    rdfs:domain crmsci:S10_Material_Substantial ;
+    rdfs:range skos:Concept .
+
+codhmo:ComponentRoleScheme a skos:ConceptScheme ;
+    skos:prefLabel "CODHMO formulation component roles"@en .
+
+codhmo:role-bulk a skos:Concept ; skos:inScheme codhmo:ComponentRoleScheme ; skos:topConceptOf codhmo:ComponentRoleScheme ;
+    skos:prefLabel "bulk / filler"@en .
+codhmo:role-binder a skos:Concept ; skos:inScheme codhmo:ComponentRoleScheme ; skos:topConceptOf codhmo:ComponentRoleScheme ;
+    skos:prefLabel "binder"@en .
+codhmo:role-additive a skos:Concept ; skos:inScheme codhmo:ComponentRoleScheme ; skos:topConceptOf codhmo:ComponentRoleScheme ;
+    skos:prefLabel "additive"@en .
+codhmo:role-contaminant a skos:Concept ; skos:inScheme codhmo:ComponentRoleScheme ; skos:topConceptOf codhmo:ComponentRoleScheme ;
+    skos:prefLabel "contaminant"@en ;
+    skos:definition "Material present but not part of the historical formulation (e.g. human keratin, bacterial protein, lab trypsin)."@en .
+
+codhmo:paste a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "paste"@en ;
+    skos:scopeNote "Generic: ground mineral bound with organic medium; no heat treatment implied (Kasso et al.)."@en .
+codhmo:calcite a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ; skos:prefLabel "calcite"@en .
+codhmo:gypsum a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ; skos:prefLabel "gypsum"@en .
+codhmo:gilding-adhesive a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:broader codhmo:adhesive ; skos:prefLabel "gold-leaf adhesive"@en .

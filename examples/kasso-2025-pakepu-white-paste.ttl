@@ -1,0 +1,74 @@
+# Step 6 case A: MIXED PASTE. Pakepu inner coffin, white paste sample CA220349.
+# Source: Kasso et al., doi:10.1016/j.jasrep.2025.105019. Facts are as reported there.
+# Sampler recorded as the author team; date only bounded "on or before" our capture of the paper.
+# Tests: a formulation with bulk + binder components, non-proteomic (FTIR/SEM) evidence,
+# and a collagen binder whose taxon is deliberately UNRESOLVED (proteomics "underway" in source).
+
+@prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix crminf: <http://www.cidoc-crm.org/extensions/crminf/> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix k:      <https://codicum.eu/data/kasso-2025/> .
+
+k:pakepu-inner-coffin a codhmo:HeritageObject ;
+    rdfs:label "Inner coffin of Pakepu, late Third Intermediate Period, Thebes"@en ;
+    crm:P1_is_identified_by k:coffin-id ;
+    crm:P46_is_composed_of k:white-paste-layer .
+k:coffin-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "CR04_ICB" .
+
+k:white-paste-layer a codhmo:MaterialLayer ;
+    rdfs:label "White paste, pseudo-cartonnage of inner coffin"@en ;
+    crm:P45_consists_of codhmo:paste .
+
+k:sampling-CA220349 a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from k:white-paste-layer ;
+    crmsci:O4_sampled_at k:region ;
+    crmsci:O5_removed k:CA220349 ;
+    crm:P14_carried_out_by k:kasso-team ;
+    crm:P4_has_time-span k:before-capture .
+k:region a crm:E53_Place ; rdfs:label "Inner coffin pseudo-cartonnage (location per source)"@en .
+k:kasso-team a crm:E74_Group ; rdfs:label "Kasso et al. research team"@en ;
+    dcterms:source <https://doi.org/10.1016/j.jasrep.2025.105019> .
+k:before-capture a crm:E52_Time-Span ;
+    rdfs:comment "Sampling date not reported; bounded by the date the paper was captured."@en ;
+    crm:P82b_end_of_the_end "2026-09-17T00:00:00"^^xsd:dateTime .
+
+k:CA220349 a crmsci:S13_Sample ;
+    crm:P1_is_identified_by k:CA220349-id ;
+    crmsci:O5i_was_removed_by k:sampling-CA220349 .
+k:CA220349-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "CA220349" .
+
+# Observations: non-proteomic evidence
+k:obs-ftir a crmsci:S4_Single_Observation ;
+    rdfs:label "FTIR: calcite bands at 1420, 875, 712 cm-1; weak 1660 cm-1 band characteristic of collagen"@en ;
+    crmsci:O8_observed k:CA220349 ;
+    codhmo:supports k:H-formulation .
+k:obs-sem a crmsci:S4_Single_Observation ;
+    rdfs:label "SEM-BSE: pseudocubic calcite grains in a dark organic matrix; calcareous microfossils"@en ;
+    crmsci:O8_observed k:CA220349 ;
+    codhmo:supports k:H-formulation , k:H-unheated .
+
+# Formulation hypothesis: one belief, two reified propositions
+k:H-formulation a codhmo:ManufacturingHypothesis ;
+    rdfs:label "White paste = ground calcite (bulk) bound with a collagenous binder"@en ;
+    crminf:J4_that k:prop-bulk , k:prop-binder .
+k:prop-bulk a crminf:I4_Proposition_Set ;
+    rdf:subject k:white-paste-layer ; rdf:predicate codhmo:hasComponentMaterial ; rdf:object k:calcite-component .
+k:prop-binder a crminf:I4_Proposition_Set ;
+    rdf:subject k:white-paste-layer ; rdf:predicate codhmo:hasComponentMaterial ; rdf:object k:binder-component .
+
+k:calcite-component a crmsci:S10_Material_Substantial ;
+    crm:P45_consists_of codhmo:calcite ; codhmo:hasComponentRole codhmo:role-bulk .
+k:binder-component a crmsci:S10_Material_Substantial ;
+    crm:P45_consists_of codhmo:collagen-adhesive ; codhmo:hasComponentRole codhmo:role-binder .
+    # No biological source: taxon unresolved until palaeoproteomics is reported.
+
+k:H-unheated a codhmo:ManufacturingHypothesis ;
+    rdfs:label "Calcite is geological (unheated): a paste, not a lime plaster"@en ;
+    crminf:J4_that k:prop-unheated .
+k:prop-unheated a crminf:I4_Proposition_Set ;
+    rdfs:label "The calcite component has not undergone thermal treatment."@en .

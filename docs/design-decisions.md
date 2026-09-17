@@ -78,6 +78,25 @@ Every `crmsci:S2_Sample_Taking` must have `crm:P14_carried_out_by` (a person, gr
 - **SHACL:** the handover's §26 minimum profile is `shapes/codhmo-core-shapes.ttl`. A MUST rule is a Violation and a SHOULD rule is a Warning.
 - **SPARQL:** the agent questions Q1–Q10 are `queries/*.rq`. Their expected answers against the Pepys graph are pinned in `tests/test_queries.py`, so the graph provably answers them without reading prose.
 
+### D14. Formulations: components with roles (Step 6)
+A mixed material is a layer with several constituent `S10` bodies (`codhmo:hasComponentMaterial`). Each constituent carries a `codhmo:hasComponentRole` from a SKOS scheme: bulk, binder, additive or contaminant. The composition is itself a hypothesis, so each component link is a reified proposition. One belief may hold several propositions, one per component.
+- **Test case:** Kasso et al. white paste CA220349, which is calcite bulk plus a collagen binder.
+- **Evidence:** FTIR and SEM observations (`crmsci:S4_Single_Observation`). The binder's taxon is left unresolved because the source's proteomics was still underway.
+
+### D15. Candidate taxa are not automatically competing
+`hasCompetingHypothesis` means the alternatives exclude each other. A database report that lists several taxa for one glue does **not** imply that. The adhesive may be a mixture, as with Sargent et al. 2025 ÆIN 656, where mammalian taxa and a "large amount of fish peptides" were reported together.
+- **Rule:** such candidates each get their own TaxonomicHypothesis linked by `compatibleWith`. Mark two of them competing only when there is a reason to think they exclude each other.
+- **Rank:** each candidate keeps the rank the source supports. Equus stays a genus (9789), and "Bos mutus/taurus" is held at Bovidae (9895) because the species is not resolved.
+
+### D16. Literature-derived records: sampler = author team, date = upper bound only (amends D12)
+Published studies often don't report who sampled or when.
+- **Actor:** the author team (`crm:E74_Group`, with `dcterms:source` giving the DOI).
+- **Date:** a time-span with only `crm:P82b_end_of_the_end`. It currently uses the date the paper was captured, which is a true "on or before" bound. The rule now requires at least one bound rather than both.
+- **Why:** this records only what is known, instead of inventing a date.
+
+### D17. A heritage object needs no sample
+The charter C1 case shows a charter with only an identifier and type is a valid CODHMO record. Scientific examination attaches later without restructuring the record (handover §33, Priority 6).
+
 ## Open items
 - IN-A001 sampler and date (the Pepys conformance test is expected to fail until they are supplied).
 - Real analytical values to replace the PLACEHOLDERs in the Pepys example.
@@ -85,4 +104,6 @@ Every `crmsci:S2_Sample_Taking` must have `crm:P14_carried_out_by` (a person, gr
 - Review of the remaining RDFS domains and ranges (D10).
 - PSI-MS/UNIMOD alignment for peptide and PTM properties.
 - Getty AAT matches for the material concepts.
-- Formulation (mixture) modelling, and a charter test case.
+- Real charter case to replace the illustrative one; AAT match for seal wax.
+- Kasso binder taxon once proteomics is published; the fish taxon in ÆIN 656 at the rank the data support.
+- Reference papers with mixed binders (e.g. Zaggia et al. 2026): the library copy is a failed web capture and needs re-downloading.
