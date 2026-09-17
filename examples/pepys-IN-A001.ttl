@@ -1,0 +1,163 @@
+# CODHMO v0.1 reference instance — Pepys MS 2981, sample IN-A001 (handover §3, §32).
+#
+# STRUCTURE IS CANONICAL; ANALYTICAL CONTENT IS PLACEHOLDER.
+# No real LC-MS/MS results are encoded here. PEP001, the seqdb-gen version/config
+# and the evidential links are illustrative stand-ins, marked codhmo-ex:placeholder,
+# to be replaced when the IN-A001 search is run. Taxon IRIs are NCBI Taxonomy.
+
+@prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix crminf: <http://www.cidoc-crm.org/extensions/crminf/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix ncbi:   <http://purl.obolibrary.org/obo/NCBITaxon_> .
+@prefix aat:    <http://vocab.getty.edu/aat/> .
+@prefix pepys:  <https://codicum.eu/data/pepys-2981/> .
+
+#################################################################
+# Heritage object → component → material layer
+#################################################################
+
+pepys:MS2981 a codhmo:HeritageObject ;
+    rdfs:label "Pepys MS 2981, Calligraphical Collection"@en ;
+    crm:P1_is_identified_by pepys:MS2981-id ;
+    crm:P50_has_current_keeper pepys:MagdaleneCollege ;
+    crm:P46_is_composed_of pepys:MS2981-p5-frag4 ;
+    rdfs:comment "Album assembled by Samuel Pepys c. 1700 from pasted medieval manuscript cuttings."@en .
+
+pepys:MS2981-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "MCP01" .
+pepys:MagdaleneCollege a crm:E74_Group ; rdfs:label "Magdalene College, Cambridge"@en .
+
+pepys:MS2981-p5-frag4 a codhmo:Fragment ;
+    rdfs:label "Fragment no. 4, page 5"@en ;
+    crm:P1_is_identified_by pepys:frag4-id ;
+    crm:P46_is_composed_of pepys:adhesive-layer-frag4 .
+
+pepys:frag4-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "MS2981/p5/frag4" .
+
+pepys:adhesive-layer-frag4 a codhmo:MaterialLayer ;
+    rdfs:label "Crackled adhesive layer lifting beneath fragment 4"@en ;
+    crm:P45_consists_of codhmo:adhesive .
+    # Deliberately no collagen/taxon/state assertion here: those are hypotheses (below).
+
+#################################################################
+# Sampling
+#################################################################
+
+pepys:sampling-IN-A001 a crmsci:S2_Sample_Taking ;
+    rdfs:label "Removal of sample IN-A001"@en ;
+    crmsci:O3_sampled_from pepys:adhesive-layer-frag4 ;
+    crmsci:O4_sampled_at pepys:region-under-frag4 ;
+    crmsci:O5_removed pepys:IN-A001 .
+    # TODO: crm:P14_carried_out_by, crm:P4_has_time-span once known.
+
+pepys:region-under-frag4 a crm:E53_Place ;
+    rdfs:label "Beneath fragment 4, page 5"@en .
+    # TODO: image identifier + x/y/w/h (CODHMO-Spatial).
+
+pepys:IN-A001 a crmsci:S13_Sample ;
+    crm:P1_is_identified_by pepys:IN-A001-id ;
+    crmsci:O5i_was_removed_by pepys:sampling-IN-A001 .
+
+pepys:IN-A001-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "IN-A001" .
+
+#################################################################
+# Computational provenance (PLACEHOLDER values)
+#################################################################
+
+pepys:seqdb-gen a prov:SoftwareAgent ;
+    rdfs:label "seqdb-gen (Rust)"@en ;
+    dcterms:hasVersion "PLACEHOLDER" ;
+    rdfs:comment "Authoritative generator: seqdb-gen."@en .
+
+pepys:dbgen-1 a codhmo:DatabaseGeneration ;
+    prov:wasAssociatedWith pepys:seqdb-gen ;
+    prov:used pepys:dbgen-1-config .
+
+pepys:dbgen-1-config a codhmo:GenerationConfiguration ;
+    rdfs:label "PLACEHOLDER generation config"@en ;
+    codhmo:configuredMaterialState codhmo:Denatured .
+    # States what the DATABASE models, not what the sample is.
+
+pepys:searchdb-1 a codhmo:SearchDatabase ;
+    rdfs:label "PLACEHOLDER sequence search database"@en ;
+    prov:wasGeneratedBy pepys:dbgen-1 .
+
+pepys:search-1 a codhmo:DatabaseSearch ;
+    rdfs:label "PLACEHOLDER LC-MS/MS search of IN-A001"@en ;
+    prov:used pepys:searchdb-1 , pepys:IN-A001 .
+
+#################################################################
+# Observation (PLACEHOLDER)
+#################################################################
+
+pepys:PEP001 a codhmo:PeptideIdentification ;
+    rdfs:label "PEP001 — PLACEHOLDER collagen peptide"@en ;
+    prov:wasGeneratedBy pepys:search-1 ;
+    codhmo:compatibleWith pepys:H1 , pepys:H2 .
+    # Shared by H1 and H2: does not discriminate rabbit from sturgeon (handover §15).
+
+#################################################################
+# Material hypotheses — propositions are reified, never asserted
+#################################################################
+
+pepys:H1 a codhmo:TaxonomicHypothesis ;
+    rdfs:label "H1: rabbit-skin glue"@en ;
+    crminf:J4_that pepys:H1-prop ;
+    codhmo:hasCompetingHypothesis pepys:H2 , pepys:H3 .
+
+pepys:H1-prop a crminf:I4_Proposition_Set ;
+    rdf:subject pepys:adhesive-layer-frag4 ;
+    rdf:predicate codhmo:hasBiologicalSource ;
+    rdf:object ncbi:9986 ;   # Oryctolagus cuniculus
+    rdfs:label "The adhesive layer derives from Oryctolagus cuniculus."@en .
+
+pepys:H2 a codhmo:TaxonomicHypothesis ;
+    rdfs:label "H2: sturgeon isinglass"@en ;
+    crminf:J4_that pepys:H2-prop ;
+    codhmo:hasCompetingHypothesis pepys:H3 .
+
+pepys:H2-prop a crminf:I4_Proposition_Set ;
+    rdf:subject pepys:adhesive-layer-frag4 ;
+    rdf:predicate codhmo:hasBiologicalSource ;
+    rdf:object ncbi:7900 ;   # Acipenseridae — family rank, do not promote (Rule 3)
+    rdfs:label "The adhesive layer derives from Acipenseridae."@en .
+
+pepys:H3 a codhmo:ManufacturingHypothesis ;
+    rdfs:label "H3: starch paste with animal glue"@en ;
+    crminf:J4_that pepys:H3-prop .
+
+pepys:H3-prop a crminf:I4_Proposition_Set ;
+    rdf:subject pepys:adhesive-layer-frag4 ;
+    rdf:predicate codhmo:hasComponentMaterial ;
+    rdf:object pepys:H3-starch-component ;
+    rdfs:label "The adhesive is a starch paste tempered with animal glue of unresolved taxon."@en .
+
+pepys:H3-starch-component a crmsci:S10_Material_Substantial ;
+    crm:P45_consists_of codhmo:starch-adhesive .
+
+#################################################################
+# Historical interpretations — independent of H1–H3
+#################################################################
+
+pepys:HI1 a codhmo:HistoricalInterpretation ;
+    rdfs:label "HI1: applied during Pepys's assembly, c. 1700"@en ;
+    crminf:J4_that pepys:HI1-prop ;
+    codhmo:hasCompetingHypothesis pepys:HI2 , pepys:HI3 .
+
+pepys:HI2 a codhmo:HistoricalInterpretation ;
+    rdfs:label "HI2: later (19th–20th c.) conservation intervention"@en ;
+    crminf:J4_that pepys:HI2-prop ;
+    codhmo:hasCompetingHypothesis pepys:HI3 .
+
+pepys:HI3 a codhmo:HistoricalInterpretation ;
+    rdfs:label "HI3: earlier adhesive from the fragment's medieval history"@en ;
+    crminf:J4_that pepys:HI3-prop .
+
+pepys:HI1-prop a crminf:I4_Proposition_Set ; rdfs:label "The adhesive layer was applied c. 1700 by or for Samuel Pepys."@en .
+pepys:HI2-prop a crminf:I4_Proposition_Set ; rdfs:label "The adhesive layer was applied in a 19th–20th-century conservation treatment."@en .
+pepys:HI3-prop a crminf:I4_Proposition_Set ; rdfs:label "The adhesive layer predates Pepys and belongs to the fragment's earlier history."@en .
+# No evidential links yet: these remain unresolved (Rule 9).

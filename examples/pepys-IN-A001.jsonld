@@ -1,0 +1,370 @@
+{
+  "@context": {
+    "codhmo": "https://codicum.eu/ontology/codhmo#",
+    "crm": "http://www.cidoc-crm.org/cidoc-crm/",
+    "crminf": "http://www.cidoc-crm.org/extensions/crminf/",
+    "crmsci": "http://www.cidoc-crm.org/extensions/crmsci/",
+    "dcterms": "http://purl.org/dc/terms/",
+    "ncbi": "http://purl.obolibrary.org/obo/NCBITaxon_",
+    "pepys": "https://codicum.eu/data/pepys-2981/",
+    "prov": "http://www.w3.org/ns/prov#",
+    "rdf": "http://www.w3.org/1999/02/22-rdf-syntax-ns#",
+    "rdfs": "http://www.w3.org/2000/01/rdf-schema#"
+  },
+  "@graph": [
+    {
+      "@id": "pepys:MS2981-id",
+      "@type": "crm:E42_Identifier",
+      "crm:P190_has_symbolic_content": "MCP01"
+    },
+    {
+      "@id": "pepys:dbgen-1-config",
+      "@type": "codhmo:GenerationConfiguration",
+      "codhmo:configuredMaterialState": {
+        "@id": "codhmo:Denatured"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "PLACEHOLDER generation config"
+      }
+    },
+    {
+      "@id": "pepys:H1-prop",
+      "@type": "crminf:I4_Proposition_Set",
+      "rdf:object": {
+        "@id": "http://purl.obolibrary.org/obo/NCBITaxon_9986"
+      },
+      "rdf:predicate": {
+        "@id": "codhmo:hasBiologicalSource"
+      },
+      "rdf:subject": {
+        "@id": "pepys:adhesive-layer-frag4"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "The adhesive layer derives from Oryctolagus cuniculus."
+      }
+    },
+    {
+      "@id": "pepys:H3-prop",
+      "@type": "crminf:I4_Proposition_Set",
+      "rdf:object": {
+        "@id": "pepys:H3-starch-component"
+      },
+      "rdf:predicate": {
+        "@id": "codhmo:hasComponentMaterial"
+      },
+      "rdf:subject": {
+        "@id": "pepys:adhesive-layer-frag4"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "The adhesive is a starch paste tempered with animal glue of unresolved taxon."
+      }
+    },
+    {
+      "@id": "pepys:MS2981",
+      "@type": "codhmo:HeritageObject",
+      "crm:P1_is_identified_by": {
+        "@id": "pepys:MS2981-id"
+      },
+      "crm:P46_is_composed_of": {
+        "@id": "pepys:MS2981-p5-frag4"
+      },
+      "crm:P50_has_current_keeper": {
+        "@id": "pepys:MagdaleneCollege"
+      },
+      "rdfs:comment": {
+        "@language": "en",
+        "@value": "Album assembled by Samuel Pepys c. 1700 from pasted medieval manuscript cuttings."
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Pepys MS 2981, Calligraphical Collection"
+      }
+    },
+    {
+      "@id": "pepys:IN-A001",
+      "@type": "crmsci:S13_Sample",
+      "crm:P1_is_identified_by": {
+        "@id": "pepys:IN-A001-id"
+      },
+      "crmsci:O5i_was_removed_by": {
+        "@id": "pepys:sampling-IN-A001"
+      }
+    },
+    {
+      "@id": "pepys:PEP001",
+      "@type": "codhmo:PeptideIdentification",
+      "codhmo:compatibleWith": [
+        {
+          "@id": "pepys:H1"
+        },
+        {
+          "@id": "pepys:H2"
+        }
+      ],
+      "prov:wasGeneratedBy": {
+        "@id": "pepys:search-1"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "PEP001 — PLACEHOLDER collagen peptide"
+      }
+    },
+    {
+      "@id": "pepys:H3-starch-component",
+      "@type": "crmsci:S10_Material_Substantial",
+      "crm:P45_consists_of": {
+        "@id": "codhmo:starch-adhesive"
+      }
+    },
+    {
+      "@id": "pepys:region-under-frag4",
+      "@type": "crm:E53_Place",
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Beneath fragment 4, page 5"
+      }
+    },
+    {
+      "@id": "pepys:MS2981-p5-frag4",
+      "@type": "codhmo:Fragment",
+      "crm:P1_is_identified_by": {
+        "@id": "pepys:frag4-id"
+      },
+      "crm:P46_is_composed_of": {
+        "@id": "pepys:adhesive-layer-frag4"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Fragment no. 4, page 5"
+      }
+    },
+    {
+      "@id": "pepys:HI3",
+      "@type": "codhmo:HistoricalInterpretation",
+      "crminf:J4_that": {
+        "@id": "pepys:HI3-prop"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "HI3: earlier adhesive from the fragment's medieval history"
+      }
+    },
+    {
+      "@id": "pepys:MagdaleneCollege",
+      "@type": "crm:E74_Group",
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Magdalene College, Cambridge"
+      }
+    },
+    {
+      "@id": "pepys:adhesive-layer-frag4",
+      "@type": "codhmo:MaterialLayer",
+      "crm:P45_consists_of": {
+        "@id": "codhmo:adhesive"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Crackled adhesive layer lifting beneath fragment 4"
+      }
+    },
+    {
+      "@id": "pepys:H2-prop",
+      "@type": "crminf:I4_Proposition_Set",
+      "rdf:object": {
+        "@id": "http://purl.obolibrary.org/obo/NCBITaxon_7900"
+      },
+      "rdf:predicate": {
+        "@id": "codhmo:hasBiologicalSource"
+      },
+      "rdf:subject": {
+        "@id": "pepys:adhesive-layer-frag4"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "The adhesive layer derives from Acipenseridae."
+      }
+    },
+    {
+      "@id": "pepys:sampling-IN-A001",
+      "@type": "crmsci:S2_Sample_Taking",
+      "crmsci:O3_sampled_from": {
+        "@id": "pepys:adhesive-layer-frag4"
+      },
+      "crmsci:O4_sampled_at": {
+        "@id": "pepys:region-under-frag4"
+      },
+      "crmsci:O5_removed": {
+        "@id": "pepys:IN-A001"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "Removal of sample IN-A001"
+      }
+    },
+    {
+      "@id": "pepys:H2",
+      "@type": "codhmo:TaxonomicHypothesis",
+      "codhmo:hasCompetingHypothesis": {
+        "@id": "pepys:H3"
+      },
+      "crminf:J4_that": {
+        "@id": "pepys:H2-prop"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "H2: sturgeon isinglass"
+      }
+    },
+    {
+      "@id": "pepys:HI1",
+      "@type": "codhmo:HistoricalInterpretation",
+      "codhmo:hasCompetingHypothesis": [
+        {
+          "@id": "pepys:HI2"
+        },
+        {
+          "@id": "pepys:HI3"
+        }
+      ],
+      "crminf:J4_that": {
+        "@id": "pepys:HI1-prop"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "HI1: applied during Pepys's assembly, c. 1700"
+      }
+    },
+    {
+      "@id": "pepys:frag4-id",
+      "@type": "crm:E42_Identifier",
+      "crm:P190_has_symbolic_content": "MS2981/p5/frag4"
+    },
+    {
+      "@id": "pepys:H1",
+      "@type": "codhmo:TaxonomicHypothesis",
+      "codhmo:hasCompetingHypothesis": [
+        {
+          "@id": "pepys:H2"
+        },
+        {
+          "@id": "pepys:H3"
+        }
+      ],
+      "crminf:J4_that": {
+        "@id": "pepys:H1-prop"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "H1: rabbit-skin glue"
+      }
+    },
+    {
+      "@id": "pepys:dbgen-1",
+      "@type": "codhmo:DatabaseGeneration",
+      "prov:used": {
+        "@id": "pepys:dbgen-1-config"
+      },
+      "prov:wasAssociatedWith": {
+        "@id": "pepys:seqdb-gen"
+      }
+    },
+    {
+      "@id": "pepys:H3",
+      "@type": "codhmo:ManufacturingHypothesis",
+      "crminf:J4_that": {
+        "@id": "pepys:H3-prop"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "H3: starch paste with animal glue"
+      }
+    },
+    {
+      "@id": "pepys:HI1-prop",
+      "@type": "crminf:I4_Proposition_Set",
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "The adhesive layer was applied c. 1700 by or for Samuel Pepys."
+      }
+    },
+    {
+      "@id": "pepys:searchdb-1",
+      "@type": "codhmo:SearchDatabase",
+      "prov:wasGeneratedBy": {
+        "@id": "pepys:dbgen-1"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "PLACEHOLDER sequence search database"
+      }
+    },
+    {
+      "@id": "pepys:HI2",
+      "@type": "codhmo:HistoricalInterpretation",
+      "codhmo:hasCompetingHypothesis": {
+        "@id": "pepys:HI3"
+      },
+      "crminf:J4_that": {
+        "@id": "pepys:HI2-prop"
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "HI2: later (19th–20th c.) conservation intervention"
+      }
+    },
+    {
+      "@id": "pepys:HI2-prop",
+      "@type": "crminf:I4_Proposition_Set",
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "The adhesive layer was applied in a 19th–20th-century conservation treatment."
+      }
+    },
+    {
+      "@id": "pepys:HI3-prop",
+      "@type": "crminf:I4_Proposition_Set",
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "The adhesive layer predates Pepys and belongs to the fragment's earlier history."
+      }
+    },
+    {
+      "@id": "pepys:seqdb-gen",
+      "@type": "prov:SoftwareAgent",
+      "dcterms:hasVersion": "PLACEHOLDER",
+      "rdfs:comment": {
+        "@language": "en",
+        "@value": "Authoritative generator: seqdb-gen."
+      },
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "seqdb-gen (Rust)"
+      }
+    },
+    {
+      "@id": "pepys:search-1",
+      "@type": "codhmo:DatabaseSearch",
+      "prov:used": [
+        {
+          "@id": "pepys:searchdb-1"
+        },
+        {
+          "@id": "pepys:IN-A001"
+        }
+      ],
+      "rdfs:label": {
+        "@language": "en",
+        "@value": "PLACEHOLDER LC-MS/MS search of IN-A001"
+      }
+    },
+    {
+      "@id": "pepys:IN-A001-id",
+      "@type": "crm:E42_Identifier",
+      "crm:P190_has_symbolic_content": "IN-A001"
+    }
+  ]
+}

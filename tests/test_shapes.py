@@ -73,3 +73,18 @@ def test_broken_graph_fails(name, remove, add):
         g.parse(data=PREFIXES + add, format="turtle")
     conforms, _ = _validate(g)
     assert not conforms, f"{name} should violate a MUST rule"
+
+
+def test_pepys_instance_has_no_violations():
+    ont = Graph().parse(ROOT / "ontology" / "codhmo.ttl")
+    shapes = Graph().parse(ROOT / "shapes" / "codhmo-core-shapes.ttl")
+    data = Graph().parse(ROOT / "examples" / "pepys-IN-A001.ttl")
+    conforms, _, text = validate(data + ont, shacl_graph=shapes, inference="rdfs", allow_warnings=True)
+    assert conforms, text
+
+
+def test_pepys_taxa_only_inside_propositions():
+    """Rule 2 / §34: the graph never asserts a biological source as fact."""
+    from rdflib import URIRef
+    data = Graph().parse(ROOT / "examples" / "pepys-IN-A001.ttl")
+    assert not list(data.triples((None, URIRef("https://codicum.eu/ontology/codhmo#hasBiologicalSource"), None)))
