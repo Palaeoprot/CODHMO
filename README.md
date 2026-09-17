@@ -37,8 +37,8 @@ identifications are always reified propositions.
 ## Measurement data: ZoomzPeak
 
 CODHMO holds interpretation, not spectra. Measurements live in
-[**ZoomzPeak**](https://github.com/Palaeoprot/ZoomzPeak), the palaeoproteomics
-metadata standard and data format. A `codhmo:SourceRecord` points an observation at
+[**ZoomzPeak**](https://github.com/Palaeoprot/ZoomzPeak), the prospective palaeoproteomics
+metadata standard and data format being developed by the [**PAASTA**](https://paasta-community.github.io/) community. A `codhmo:SourceRecord` points an observation at
 one ZoomzPeak row by table, key columns and schema version
 ([D23](docs/design-decisions.md)). `queries/q11` walks from that row back to the
 observation, hypothesis, sample and object.
