@@ -56,6 +56,8 @@ BROKEN = [
     ("hypothesis without proposition", "ex:h1 crminf:J4_that ex:p1 .", ""),
     ("generation without software", "ex:gen prov:wasAssociatedWith ex:seqdb-gen .", ""),
     ("generation without config", "ex:gen prov:used ex:cfg .", ""),
+    ("asserted component role", "", "ex:layer codhmo:hasComponentRole codhmo:role-binder ."),
+    ("asserted component", "", "ex:layer codhmo:hasComponentMaterial ex:layer ."),
     ("unversioned software", 'ex:seqdb-gen dcterms:hasVersion "x" .', ""),
 ]
 

@@ -80,7 +80,11 @@ def test_mixed_ranks_stay_candidates_and_are_not_forced_to_compete():
 
 def test_mixed_paste_has_bulk_and_binder_without_taxon():
     g = load("kasso-2025-pakepu-white-paste")
-    roles = {str(o).rsplit("#", 1)[1] for o in g.objects(None, URIRef(CODHMO + "hasComponentRole"))}
+    role = URIRef(CODHMO + "hasComponentRole")
+    assert not list(g.triples((None, role, None)))  # never asserted
+    RDF = "http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+    roles = {str(g.value(p, URIRef(RDF + "object"))).rsplit("#", 1)[1]
+             for p in g.subjects(URIRef(RDF + "predicate"), role)}
     assert roles == {"role-bulk", "role-binder"}
     assert ask(g, "q04") == set() and ask(g, "q05") == set()
 

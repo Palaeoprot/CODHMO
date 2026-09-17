@@ -116,7 +116,7 @@ codhmo:HistoricalInterpretation a owl:Class ;
 
 codhmo:hasComponentMaterial a owl:ObjectProperty ;
     rdfs:label "has component material"@en ;
-    skos:definition "Relates a material body to a constituent material body in a formulation (e.g. glue to its starch component)."@en ;
+    skos:definition "Relates a material body to a constituent material body in a formulation (e.g. glue to its starch component). Composition is an interpretation, so it is asserted only inside a proposition."@en ;
     rdfs:domain crmsci:S10_Material_Substantial ;
     rdfs:range crmsci:S10_Material_Substantial ;
     skos:scopeNote "Formulation modelling is provisional (handover §17)."@en .
@@ -241,7 +241,7 @@ codhmo:ink a skos:Concept, crm:E57_Material ;
 
 codhmo:hasComponentRole a owl:ObjectProperty ;
     rdfs:label "has component role"@en ;
-    skos:definition "Relates a constituent material body to the role it plays in a formulation, drawn from codhmo:ComponentRoleScheme."@en ;
+    skos:definition "Relates a constituent material body to the role it plays in a formulation, drawn from codhmo:ComponentRoleScheme. A role is an interpretation (the same protein can be binder, contaminant or evidence of use), so it is asserted only inside a proposition."@en ;
     rdfs:domain crmsci:S10_Material_Substantial ;
     rdfs:range skos:Concept .
 

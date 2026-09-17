@@ -153,6 +153,23 @@ shapes:NCBITaxonIdShape a sh:NodeShape ;
             }""" ] .
 
 shapes:ComponentRoleValueShape a sh:NodeShape ;
-    sh:targetObjectsOf codhmo:hasComponentRole ;
-    sh:property [ sh:path skos:inScheme ; sh:hasValue codhmo:ComponentRoleScheme ;
-        sh:message "Component roles MUST come from codhmo:ComponentRoleScheme." ] .
+    sh:targetClass crminf:I4_Proposition_Set ;
+    sh:sparql [
+        sh:message "A component-role proposition MUST use a role from codhmo:ComponentRoleScheme." ;
+        sh:prefixes [ sh:declare
+            [ sh:prefix "rdf" ; sh:namespace "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xsd:anyURI ] ,
+            [ sh:prefix "skos" ; sh:namespace "http://www.w3.org/2004/02/skos/core#"^^xsd:anyURI ] ,
+            [ sh:prefix "codhmo" ; sh:namespace "https://codicum.eu/ontology/codhmo#"^^xsd:anyURI ] ] ;
+        sh:select """
+            SELECT $this ?value WHERE {
+                $this rdf:predicate codhmo:hasComponentRole ; rdf:object ?value .
+                FILTER NOT EXISTS { ?value skos:inScheme codhmo:ComponentRoleScheme }
+            }""" ] .
+
+# Interpretive predicates are never asserted directly (D7, D18) -------------
+shapes:NoAssertedInterpretationShape a sh:NodeShape ;
+    sh:targetSubjectsOf codhmo:hasComponentRole , codhmo:hasComponentMaterial ;
+    sh:property [ sh:path codhmo:hasComponentRole ; sh:maxCount 0 ;
+        sh:message "codhmo:hasComponentRole MUST NOT be asserted directly; state it inside a proposition." ] ;
+    sh:property [ sh:path codhmo:hasComponentMaterial ; sh:maxCount 0 ;
+        sh:message "codhmo:hasComponentMaterial MUST NOT be asserted directly; state it inside a proposition." ] .

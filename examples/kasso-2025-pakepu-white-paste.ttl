@@ -55,16 +55,23 @@ k:obs-sem a crmsci:S4_Single_Observation ;
 # Formulation hypothesis: one belief, two reified propositions
 k:H-formulation a codhmo:ManufacturingHypothesis ;
     rdfs:label "White paste = ground calcite (bulk) bound with a collagenous binder"@en ;
-    crminf:J4_that k:prop-bulk , k:prop-binder .
+    crminf:J4_that k:prop-bulk , k:prop-binder , k:prop-bulk-role , k:prop-binder-role .
 k:prop-bulk a crminf:I4_Proposition_Set ;
     rdf:subject k:white-paste-layer ; rdf:predicate codhmo:hasComponentMaterial ; rdf:object k:calcite-component .
 k:prop-binder a crminf:I4_Proposition_Set ;
     rdf:subject k:white-paste-layer ; rdf:predicate codhmo:hasComponentMaterial ; rdf:object k:binder-component .
 
+# Roles are interpretations too (contaminant vs original is context-dependent), so they are propositions.
+k:prop-bulk-role a crminf:I4_Proposition_Set ;
+    rdf:subject k:calcite-component ; rdf:predicate codhmo:hasComponentRole ; rdf:object codhmo:role-bulk .
+k:prop-binder-role a crminf:I4_Proposition_Set ;
+    rdf:subject k:binder-component ; rdf:predicate codhmo:hasComponentRole ; rdf:object codhmo:role-binder .
+
+# Hypothesised components: described here, but only ever linked to the layer or a role inside propositions.
 k:calcite-component a crmsci:S10_Material_Substantial ;
-    crm:P45_consists_of codhmo:calcite ; codhmo:hasComponentRole codhmo:role-bulk .
+    crm:P45_consists_of codhmo:calcite .
 k:binder-component a crmsci:S10_Material_Substantial ;
-    crm:P45_consists_of codhmo:collagen-adhesive ; codhmo:hasComponentRole codhmo:role-binder .
+    crm:P45_consists_of codhmo:collagen-adhesive .
     # No biological source: taxon unresolved until palaeoproteomics is reported.
 
 k:H-unheated a codhmo:ManufacturingHypothesis ;
