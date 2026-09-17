@@ -71,5 +71,5 @@ CODHMO is licensed under the [GNU General Public License v3.0](LICENSE).
 
 This project has received funding from the European Union's EU Framework Programme
 for Research and Innovation Horizon Europe under Grant Agreement No. 101166995.
-The European Research Agency is not responsible for any use that may be made of the
+The European Research Executive Agency is not responsible for any use that may be made of the
 information it contains.
