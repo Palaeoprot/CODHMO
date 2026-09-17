@@ -1,0 +1,58 @@
+term,kind,module,definition,decision,external_term,parent_or_equivalent,domain,range,shacl_constraint,example,status,verify_note
+HeritageObject,class,core,"A physical cultural-heritage object that material analysis refers to",subclass,crm:E22_Human-Made_Object,rdfs:subClassOf crm:E22,,,"sh:minCount 1 identifier (crm:P1)",Pepys MS 2981,draft,
+Manuscript,class,manuscript,"A handwritten book or codex",defer-to-CODICUM,crm:E22_Human-Made_Object + crm:P2_has_type,type not class,,,,Pepys MS 2981,draft,"Keep codicological classes out of core; use E55 Type terms"
+Charter,class,manuscript,"A single-sheet legal/diplomatic document",defer-to-CODICUM,crm:E22 + crm:P2_has_type,type not class,,,,,draft,
+Fragment,class,core,"A detached part of a former heritage object, now a component of another",subclass,crm:E22_Human-Made_Object,rdfs:subClassOf crm:E22,,,,fragment 4,draft,"Former-whole link via crm:P46 / E80 Part Removal"
+Leaf,class,manuscript,"A folio",defer-to-CODICUM,crm:E22 + crm:P2_has_type,type not class,,,,,draft,
+Binding,class,manuscript,"Binding structure of a codex",defer-to-CODICUM,crm:E22 + crm:P2_has_type,type not class,,,,,draft,
+MaterialLayer,class,core,"A spatially bounded body of material on or in a heritage object (adhesive, coating, ink, sizing, repair)",subclass,crmsci:S10_Material_Substantial,rdfs:subClassOf crmsci:S10,,,"must be linked to a HeritageObject",adhesive layer under fragment 4,draft,"DECIDED 2026-09-17: S10"
+Material,class,core,"A kind of material (not a quantity of it)",reuse,crm:E57_Material,equivalent,,,,animal glue,draft,"E57 is a type; material *instances* are layers/samples"
+Adhesive,class,materials,"Material type used to bond",reuse-as-type,crm:E57_Material (instance/SKOS),skos:Concept under E57,,,,,draft,"Model material hierarchy as SKOS scheme, not OWL classes"
+CollagenAdhesive,class,materials,"Adhesive whose binder is collagen-derived",reuse-as-type,crm:E57_Material (SKOS),skos:broader Adhesive,,,,rabbit-skin glue,draft,
+StarchAdhesive,class,materials,"Adhesive whose binder is starch",reuse-as-type,crm:E57_Material (SKOS),skos:broader Adhesive,,,,flour paste,draft,
+ProteinBinder,class,materials,"Proteinaceous binder",reuse-as-type,crm:E57_Material (SKOS),,,,,egg glair,draft,
+Ink,class,materials,,reuse-as-type,crm:E57_Material (SKOS),,,,,,draft,
+Parchment,class,materials,,reuse-as-type,crm:E57_Material (SKOS),,,,,,draft,"Check Getty AAT IDs for all material concepts"
+Paper,class,materials,,reuse-as-type,crm:E57_Material (SKOS),,,,,,draft,
+Sample,class,core,"Physical sample removed for analysis",reuse,crmsci:S13_Sample,equivalent,,,"sh:minCount 1 identifier; should have O5i/sampling activity",IN-A001,draft,
+SubSample,class,core,"Sample removed from a sample",reuse,crmsci:S13_Sample + crmsci:O3_sampled_from S13,no new class,,,,,draft,
+SamplingActivity,class,core,"Event that removed a sample",reuse,crmsci:S2_Sample_Taking,equivalent,,,"must have O5 removed; should have O3 sampled from",sampling of IN-A001,draft,"Missing from handover class list; added"
+SamplingRegion,class,spatial,"Region on object where sampling occurred",reuse,crm:E53_Place / crmsci:O4_sampled_at,,,,,under fragment 4 p.5,draft,"Image coords via CRMdig later"
+AnalyticalActivity,class,core,"Scientific examination of a sample",reuse,crmsci:S4_Observation,equivalent/subclass,,,,LC-MS/MS run,draft,
+DatabaseGeneration,class,proteomics,"Computational generation of a search database",new+align,prov:Activity,rdfs:subClassOf prov:Activity (and crm:E65?),,,"must prov:used software agent + config; must prov:generated database",seqdb-gen run,draft,
+DatabaseSearch,class,proteomics,"Search of spectra against a database",new+align,prov:Activity,rdfs:subClassOf prov:Activity,,,"must prov:used database + spectra",pSAGEd search,draft,
+PeptideIdentification,class,proteomics,"A PSM/peptide-level result",new+align,prov:Entity (+ PSI-MS terms),rdfs:subClassOf prov:Entity,,,"must have sequence + score + source search",PEP001,draft,"Check PSI-MS / mzIdentML semantics first"
+PTMObservation,class,proteomics,"Observed modification at a site",new+align,prov:Entity + UNIMOD ref,rdfs:subClassOf prov:Entity,,,"must ref UNIMOD accession + residue + position",deamidation N,draft,
+MaterialHypothesis,class,core,"Proposition about material identity/composition",reuse,crminf:I2_Belief (+ I4 Proposition Set),subclass of crminf:I2,,,"must have proposition; should have evidence",H1 rabbit-skin glue,draft,"DECIDED 2026-09-17: adopt CRMinf"
+TaxonomicHypothesis,class,core,"Proposition about biological source",reuse,crminf:I2_Belief,subclass of MaterialHypothesis?,,,,Leporidae,draft,
+ManufacturingHypothesis,class,core,"Proposition about process/formulation",reuse,crminf:I2_Belief,subclass,,,,,draft,
+HistoricalInterpretation,class,core,"Proposition about when/why material was applied",reuse,crminf:I2_Belief,subclass,,,,HI1 Pepys-period mounting,draft,
+Evidence,class,core,"Observation used as premise",reuse,crminf:I2 via crminf:J1_used_as_premise,role not class?,,,,PEP001,draft,"Evidence may be a role, not a type"
+ConfidenceAssessment,class,core,"Assessed belief value",reuse,crminf:I6_Belief_Value,equivalent,,,"no numeric scale required in v0.1",,draft,
+hasComponent,property,core,object → component,reuse,crm:P46_is_composed_of,,crm:E18,crm:E18,,MS2981 → fragment 4,draft,
+hasMaterialLayer,property,core,object → material layer,reuse,crm:P46_is_composed_of,,HeritageObject,MaterialLayer,,,draft,"DECIDED 2026-09-17: P46; term dropped in favour of P46"
+hasMaterial,property,core,layer → material type,reuse,crm:P45_consists_of,,crm:E18,crm:E57,,,draft,
+hasComponentMaterial,property,materials,material → constituent material,new,,rdfs:subPropertyOf? none in CRM,Material,Material,,glue → starch,draft,"Formulation modelling needs design (§17)"
+hasBiologicalSource,property,taxonomy,material instance → taxon,new,dwc:Taxon / NCBI/GBIF IRI,,MaterialLayer|Sample,IRI,"sh:nodeKind sh:IRI; authority-neutral",Leporidae,draft,"Only as object of a Hypothesis, never direct fact"
+hasSourceTissue,property,materials,material → anatomical source,new,UBERON IRI as range,,Material,IRI,"sh:nodeKind sh:IRI",UBERON skin,draft,
+hasMaterialState,property,materials,material → state,new,,,MaterialLayer|Sample,MaterialState (SKOS),,denatured,draft,"Distinct from config flag (§7)"
+hasManufacturedMaterialType,property,materials,material → manufactured type,reuse,crm:P2_has_type,,,crm:E55,,rabbit-skin glue,draft,
+hasSample,property,core,material → sample,reuse,inverse crmsci:O3_sampled_from,,,,,,drop,"Use inverse; no new term"
+sampledMaterial,property,core,sample(activity) → source,reuse,crmsci:O3_sampled_from,,crmsci:S2,crmsci:S10,,,drop,
+hasSamplingRegion,property,core,activity → region,reuse,crmsci:O4_sampled_at,,crmsci:S2,crm:E53,,,drop,
+hasAnalyticalActivity,property,core,sample → analysis,reuse,crmsci:O8i_was_observed_by / prov:used,,,,,,drop,
+producedObservation,property,core,activity → result,reuse,prov:wasGeneratedBy (inverse) / crmsci:O16,,,,,,drop,
+observedEntity,property,core,observation → target,reuse,crmsci:O8_observed,,crmsci:S4,crmsci:S15,,,drop,
+hasPeptideIdentification,property,proteomics,search → peptide,reuse,prov:wasGeneratedBy (inverse),,,,,,drop,
+hasPTMObservation,property,proteomics,peptide → PTM,new,,,PeptideIdentification,PTMObservation,,,draft,
+supports,property,core,evidence → hypothesis,new,crminf:J1_used_as_premise (weaker),,Evidence,MaterialHypothesis,,PEP001 → H1,draft,"Non-entailing; defeasible (§29J)"
+contradicts,property,core,evidence → hypothesis,new,,,Evidence,MaterialHypothesis,,,draft,
+compatibleWith,property,core,evidence → hypothesis,new,,,Evidence,MaterialHypothesis,,PEP001 → rabbit & sturgeon,draft,
+derivedFrom,property,core,interpretation → source,reuse,prov:wasDerivedFrom,,,,,,drop,
+hasEvidence,property,core,hypothesis → evidence,reuse,inverse of supports/compatibleWith,,,,,,drop,"Keep only one direction"
+hasProposition,property,core,hypothesis → proposition,reuse,crminf:J4_that,,crminf:I2,crminf:I4,,,drop,
+hasCompetingHypothesis,property,core,hypothesis ↔ alternative,new,,owl:SymmetricProperty,MaterialHypothesis,MaterialHypothesis,,H1 ↔ H2,draft,
+hasConfidenceAssessment,property,core,hypothesis → confidence,reuse,crminf:J5_holds_to_be,,crminf:I2,crminf:I6,,,drop,
+assertedBy,property,core,interpretation → agent,reuse,crm:P14_carried_out_by (on I5) / prov:wasAttributedTo,,,,,,drop,
+assertedAt,property,core,interpretation → time,reuse,crm:P4_has_time-span / prov:generatedAtTime,,,,,,drop,
+usesMethod,property,core,interpretation → method,reuse,crm:P33_used_specific_technique,,,,,,drop,
