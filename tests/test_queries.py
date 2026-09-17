@@ -108,3 +108,24 @@ def test_birth_girdle_separates_support_residue_and_use():
     contradicted = {h.rsplit("/", 1)[1] for h, _ in ask(g, "q08")}
     assert contradicted == {"R-eggyolk"}  # control blank weakens egg yolk
     assert ask(g, "q09") == set()        # the use interpretation now has evidence
+
+
+def test_missale_calf_is_derived_by_parchment_rule_not_observed():
+    g = load("palandri-2024-missale-nidrosiense")
+    q = """PREFIX crminf: <http://www.cidoc-crm.org/extensions/crminf/>
+           SELECT ?premise ?conclusion WHERE {
+             ?i crminf:J3_applied <https://codicum.eu/ontology/codhmo#rule-parchment-bos-is-calf> ;
+                crminf:J1_used_as_premise ?premise ; crminf:J2_concluded_that ?conclusion . }"""
+    rows = {tuple(str(v).rsplit("/", 1)[1] for v in r) for r in g.query(q)}
+    assert rows == {("T-bos", "H-calf")}
+    assert {r[2].removeprefix(NCBI) for r in ask(g, "q04")} == {"9903", "9940"}  # no "calf" taxon
+
+
+def test_scythian_exclusive_alternatives_compete():
+    g = load("brandt-2023-scythian-leather")
+    pairs = {frozenset(x.rsplit("/", 1)[1] for x in p) for p in ask(g, "q06")}
+    assert pairs == {frozenset(p) for p in [("T34-panthera", "T34-mustelidae"),
+                                              ("T34-panthera", "T34-hyaenidae"),
+                                              ("T34-mustelidae", "T34-hyaenidae")]}
+    assert NCBI + "9606" in {r[2] for r in ask(g, "q04")}
+    assert ask(g, "q05") == set()

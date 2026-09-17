@@ -1,0 +1,81 @@
+# Leather stress test (non-manuscript): Scythian leather objects, southern Ukraine.
+# Source: Brandt et al. 2023, PLoS ONE 18(12): e0294129, doi:10.1371/journal.pone.0294129. Facts as reported.
+# Tests: HUMAN skin identification; an ambiguous ZooMS result spanning several families whose options
+# EXCLUDE each other (one skin), so they compete, unlike the mixed glue of D15; failed identifications recorded.
+# The Bos parchment->calf rule does NOT apply to leather.
+
+@prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix crminf: <http://www.cidoc-crm.org/extensions/crminf/> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix ncbi:   <http://purl.obolibrary.org/obo/NCBITaxon_> .
+@prefix y:      <https://codicum.eu/data/brandt-2023/> .
+
+y:team a crm:E74_Group ; rdfs:label "Brandt et al. research team"@en ;
+    dcterms:source <https://doi.org/10.1371/journal.pone.0294129> .
+y:before-capture a crm:E52_Time-Span ; crm:P82b_end_of_the_end "2026-09-17T00:00:00"^^xsd:dateTime .
+
+# Sample 7: quiver, Ilyinka kurgan 4 burial 2: human skin
+y:quiver7 a codhmo:HeritageObject ; rdfs:label "Leather quiver, Ilyinka, kurgan 4, burial 2"@en ;
+    crm:P1_is_identified_by y:quiver7-id ; crm:P46_is_composed_of y:quiver7-leather .
+y:quiver7-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "Ilyinka k4 b2 quiver" .
+y:quiver7-leather a codhmo:MaterialLayer ; rdfs:label "Quiver leather"@en .
+y:sampling-7 a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from y:quiver7-leather ; crmsci:O4_sampled_at y:region-7 ; crmsci:O5_removed y:S7 ;
+    crm:P14_carried_out_by y:team ; crm:P4_has_time-span y:before-capture .
+y:region-7 a crm:E53_Place ; rdfs:label "2x2 mm discreet removal"@en .
+y:S7 a crmsci:S13_Sample ; crm:P1_is_identified_by y:S7-id ; crmsci:O5i_was_removed_by y:sampling-7 .
+y:S7-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "7" .
+y:obs-7 a crmsci:S4_Single_Observation ; rdfs:label "ZooMS markers identifying human skin (source Fig 6)"@en ;
+    crmsci:O8_observed y:S7 ; codhmo:supports y:T7-human .
+y:T7-human a codhmo:TaxonomicHypothesis ; rdfs:label "Quiver leather is human skin"@en ; crminf:J4_that y:p7 .
+y:p7 a crminf:I4_Proposition_Set ;
+    rdf:subject y:quiver7-leather ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9606 .
+
+# Sample 34: ambiguous large carnivore; one skin, so the options exclude each other
+y:obj34 a codhmo:HeritageObject ; rdfs:label "Leather object, sample 34"@en ;
+    crm:P1_is_identified_by y:obj34-id ; crm:P46_is_composed_of y:obj34-leather .
+y:obj34-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "object of sample 34" .
+y:obj34-leather a codhmo:MaterialLayer ; rdfs:label "Leather, sample 34"@en .
+y:sampling-34 a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from y:obj34-leather ; crmsci:O4_sampled_at y:region-34 ; crmsci:O5_removed y:S34 ;
+    crm:P14_carried_out_by y:team ; crm:P4_has_time-span y:before-capture .
+y:region-34 a crm:E53_Place ; rdfs:label "2x2 mm discreet removal"@en .
+y:S34 a crmsci:S13_Sample ; crm:P1_is_identified_by y:S34-id ; crmsci:O5i_was_removed_by y:sampling-34 .
+y:S34-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "34" .
+y:obs-34 a crmsci:S4_Single_Observation ;
+    rdfs:label "ZooMS markers shared by tiger, lion, marten, wolverine, otter or hyena"@en ;
+    crmsci:O8_observed y:S34 ;
+    codhmo:compatibleWith y:T34-panthera , y:T34-mustelidae , y:T34-hyaenidae .
+y:T34-panthera a codhmo:TaxonomicHypothesis ; rdfs:label "Panthera (tiger or lion)"@en ; crminf:J4_that y:p34a ;
+    codhmo:hasCompetingHypothesis y:T34-mustelidae , y:T34-hyaenidae .
+y:T34-mustelidae a codhmo:TaxonomicHypothesis ; rdfs:label "Mustelidae (marten, wolverine or otter)"@en ; crminf:J4_that y:p34b ;
+    codhmo:hasCompetingHypothesis y:T34-hyaenidae .
+y:T34-hyaenidae a codhmo:TaxonomicHypothesis ; rdfs:label "Hyaenidae (hyena)"@en ; crminf:J4_that y:p34c .
+y:p34a a crminf:I4_Proposition_Set ; rdf:subject y:obj34-leather ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9688 .
+y:p34b a crminf:I4_Proposition_Set ; rdf:subject y:obj34-leather ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9655 .
+y:p34c a crminf:I4_Proposition_Set ; rdf:subject y:obj34-leather ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9676 .
+
+# Sample 45: red fox
+y:obj45 a codhmo:HeritageObject ; rdfs:label "Leather object, sample 45"@en ;
+    crm:P1_is_identified_by y:obj45-id ; crm:P46_is_composed_of y:obj45-leather .
+y:obj45-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "object of sample 45" .
+y:obj45-leather a codhmo:MaterialLayer ; rdfs:label "Leather, sample 45"@en .
+y:sampling-45 a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from y:obj45-leather ; crmsci:O4_sampled_at y:region-45 ; crmsci:O5_removed y:S45 ;
+    crm:P14_carried_out_by y:team ; crm:P4_has_time-span y:before-capture .
+y:region-45 a crm:E53_Place ; rdfs:label "2x2 mm discreet removal"@en .
+y:S45 a crmsci:S13_Sample ; crm:P1_is_identified_by y:S45-id ; crmsci:O5i_was_removed_by y:sampling-45 .
+y:S45-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "45" .
+y:obs-45 a crmsci:S4_Single_Observation ; rdfs:label "ZooMS: red fox"@en ;
+    crmsci:O8_observed y:S45 ; codhmo:supports y:T45-fox .
+y:T45-fox a codhmo:TaxonomicHypothesis ; rdfs:label "Leather is red fox"@en ; crminf:J4_that y:p45 .
+y:p45 a crminf:I4_Proposition_Set ; rdf:subject y:obj45-leather ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9627 .
+
+# Failed identifications are data, not omissions
+y:obs-unidentified a crmsci:S4_Single_Observation ;
+    rdfs:label "12 of 45 samples yielded no ZooMS identification (reported as within expected success rate)"@en .

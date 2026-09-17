@@ -1,0 +1,79 @@
+# Parchment stress test: Missale Nidrosiense (1519), copy NB D Pal 44, reused parchment fragment in the binding.
+# Source: Palandri et al. 2024, doi:10.1515/9783111162768-009. Facts as reported there.
+# Tests: ZooMS "calf" split into taxon (Bos) + calf status DERIVED by the parchment-only domain rule;
+# extra sheep markers on a spine sample held as competing hypotheses: glue contamination vs sheep parchment.
+
+@prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix crminf: <http://www.cidoc-crm.org/extensions/crminf/> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix ncbi:   <http://purl.obolibrary.org/obo/NCBITaxon_> .
+@prefix m:      <https://codicum.eu/data/palandri-2024/> .
+
+m:DPal44 a codhmo:HeritageObject ;
+    rdfs:label "Missale Nidrosiense (1519), NB D Pal 44"@en ;
+    crm:P1_is_identified_by m:DPal44-id ;
+    crm:P46_is_composed_of m:spine-fragment .
+m:DPal44-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "NB D Pal 44" .
+
+m:spine-fragment a codhmo:Fragment ;
+    rdfs:label "Handwritten parchment fragment reused as spine lining"@en ;
+    crm:P1_is_identified_by m:spine-fragment-id ;
+    crm:P46_is_composed_of m:spine-parchment .
+m:spine-fragment-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "D Pal 44 spine lining fragment" .
+m:spine-parchment a codhmo:MaterialLayer ; rdfs:label "Parchment of spine lining fragment"@en ;
+    crm:P45_consists_of codhmo:parchment .
+
+m:team a crm:E74_Group ; rdfs:label "Palandri et al. research team"@en ;
+    dcterms:source <https://doi.org/10.1515/9783111162768-009> .
+m:before-capture a crm:E52_Time-Span ; crm:P82b_end_of_the_end "2026-09-17T00:00:00"^^xsd:dateTime .
+m:sampling-spine a crmsci:S2_Sample_Taking ;
+    rdfs:comment "Non-invasive eZooMS: PVC eraser crumbs."@en ;
+    crmsci:O3_sampled_from m:spine-parchment ; crmsci:O4_sampled_at m:region-spine ; crmsci:O5_removed m:S-spine ;
+    crm:P14_carried_out_by m:team ; crm:P4_has_time-span m:before-capture .
+m:region-spine a crm:E53_Place ; rdfs:label "Spine (one of the two spine samples)"@en .
+m:S-spine a crmsci:S13_Sample ; crm:P1_is_identified_by m:S-spine-id ; crmsci:O5i_was_removed_by m:sampling-spine .
+m:S-spine-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "D Pal 44 spine eZooMS sample" .
+
+m:obs-zooms-bos a crmsci:S4_Single_Observation ;
+    rdfs:label "eZooMS: bovine (Bos) collagen markers, reported as calf"@en ;
+    crmsci:O8_observed m:S-spine ;
+    codhmo:supports m:T-bos .
+m:obs-zooms-sheep a crmsci:S4_Single_Observation ;
+    rdfs:label "eZooMS: additional sheep markers on this spine sample"@en ;
+    crmsci:O8_observed m:S-spine ;
+    codhmo:compatibleWith m:H-glue-contamination , m:T-sheep-parchment .
+
+# Taxon: what ZooMS resolves
+m:T-bos a codhmo:TaxonomicHypothesis ; rdfs:label "Parchment is bovine (Bos)"@en ; crminf:J4_that m:p-bos .
+m:p-bos a crminf:I4_Proposition_Set ;
+    rdf:subject m:spine-parchment ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9903 .
+
+# Calf status: derived by the parchment-only domain rule
+m:inference-calf a crminf:I5_Inference_Making ;
+    crminf:J3_applied codhmo:rule-parchment-bos-is-calf ;
+    crminf:J1_used_as_premise m:T-bos ;
+    crminf:J2_concluded_that m:H-calf .
+m:H-calf a codhmo:ManufacturingHypothesis ;
+    rdfs:label "Parchment is calfskin (animal under about 8 weeks)"@en ;
+    crminf:J4_that m:p-calf .
+m:p-calf a crminf:I4_Proposition_Set ; rdfs:label "The spine parchment was made from the skin of a calf."@en .
+
+# Extra sheep markers: two exclusive explanations
+m:H-glue-contamination a codhmo:MaterialHypothesis ;
+    rdfs:label "Sheep markers come from animal glue at the spine (contaminant)"@en ;
+    crminf:J4_that m:p-glue , m:p-glue-role ;
+    codhmo:hasCompetingHypothesis m:T-sheep-parchment .
+m:glue-component a crmsci:S10_Material_Substantial ; crm:P45_consists_of codhmo:collagen-adhesive .
+m:p-glue a crminf:I4_Proposition_Set ;
+    rdf:subject m:spine-parchment ; rdf:predicate codhmo:hasComponentMaterial ; rdf:object m:glue-component .
+m:p-glue-role a crminf:I4_Proposition_Set ;
+    rdf:subject m:glue-component ; rdf:predicate codhmo:hasComponentRole ; rdf:object codhmo:role-contaminant .
+m:T-sheep-parchment a codhmo:TaxonomicHypothesis ;
+    rdfs:label "Parchment itself includes sheepskin"@en ; crminf:J4_that m:p-sheep .
+m:p-sheep a crminf:I4_Proposition_Set ;
+    rdf:subject m:spine-parchment ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9940 .

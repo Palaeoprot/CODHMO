@@ -113,7 +113,8 @@ def test_taxon_must_be_numeric_ncbi_iri(bad):
 
 
 @pytest.mark.parametrize("name", ["kasso-2025-pakepu-white-paste", "sargent-2025-aein656-gold-leaf-adhesive",
-                                  "charter-illustrative", "fiddyment-2021-birth-girdle"])
+                                  "charter-illustrative", "fiddyment-2021-birth-girdle",
+                                  "palandri-2024-missale-nidrosiense", "brandt-2023-scythian-leather"])
 def test_step6_examples_have_no_violations(name):
     ont = Graph().parse(ROOT / "ontology" / "codhmo.ttl")
     shapes = Graph().parse(ROOT / "shapes" / "codhmo-core-shapes.ttl")

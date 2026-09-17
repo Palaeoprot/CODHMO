@@ -97,7 +97,24 @@ Published studies often don't report who sampled or when.
 ### D17. A heritage object needs no sample
 The charter C1 case shows a charter with only an identifier and type is a valid CODHMO record. Scientific examination attaches later without restructuring the record (handover §33, Priority 6).
 
+### D18. Component roles and composition are propositions, never assertions
+The same markers can be read three ways: as a contaminant (sheep markers on a spine, put down to glue, in Palandri et al. 2024), as part of the formulation, or as evidence of use (residues on the MS. 632 birth girdle). A role is therefore an interpretation.
+- **Rule:** `hasComponentRole` and `hasComponentMaterial` appear only inside reified propositions. SHACL rejects them as direct assertions.
+- **Hypothesised components:** these nodes can still carry a description (`crm:P45`), but they are linked to a layer or a role only through propositions.
+
+### D19. Domain inference rules are explicit CRMinf objects: bovine parchment = calf
+ZooMS resolves a taxon, not the animal's age. The parchment-only rule `codhmo:rule-parchment-bos-is-calf` (a `crminf:I3_Inference_Logic`) states that bovine parchment must be calfskin, because workable parchment cannot be made from cattle older than about 8 weeks.
+- **How it is recorded:** a `crminf:I5_Inference_Making` applies the rule (`J3`), takes the Bos taxonomic belief as its premise (`J1`) and concludes the calfskin belief (`J2`).
+- **Why:** the calf claim can be traced to the rule, and an agent can see that it was derived, not observed.
+- **Scope:** the rule does not apply to Bos leather or glue. It was supplied by M. Collins on 2026-09-17.
+- **No "calf" taxon:** the taxon stays Bos (9903).
+
+### D20. Competing vs co-occurring candidates, and recorded failures
+- **Competing:** alternatives that exclude each other must be marked with `hasCompetingHypothesis`. For example, one leather sample whose markers are shared by Panthera, Mustelidae and Hyaenidae (Brandt et al. 2023, sample 34) can only come from one of them. This contrasts with a possible mixed glue (D15).
+- **Failed identifications:** these are recorded as observations, for example "12 of 45 samples unidentified", not omitted.
+
 ## Open items
+- Policy on human-derived material (e.g. Scythian quiver, human skin): sensitivity or ethics flag not yet decided.
 - IN-A001 sampler and date (the Pepys conformance test is expected to fail until they are supplied).
 - Real analytical values to replace the PLACEHOLDERs in the Pepys example.
 - Namespace IRI (`https://codicum.eu/ontology/codhmo#` is provisional).
