@@ -121,6 +121,7 @@ Human-derived material is flagged with `codhmo:hasSensitivity codhmo:sensitivity
 - **Extensible:** the same scheme can later hold other flags, such as sacred objects or restricted collections.
 
 ## Open items
+- Palandri et al. 2024 (Zenodo 18772648): MA01-MA20 sample-to-fragment/location mapping requested from the author (2026-09-17); the Missale example holds one representative spine sample until then.
 - IN-A001 sampler and date (the Pepys conformance test is expected to fail until they are supplied).
 - Real analytical values to replace the PLACEHOLDERs in the Pepys example.
 - Namespace IRI (`https://codicum.eu/ontology/codhmo#` is provisional).
