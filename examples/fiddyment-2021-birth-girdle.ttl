@@ -1,0 +1,105 @@
+# Parchment stress test: Wellcome Collection Western MS. 632, parchment birth girdle.
+# Source: Fiddyment et al. 2021, "Girding the loins?", doi:10.1098/rsos.202055. Facts as reported there.
+# Tests: non-invasive eraser sampling; support taxon vs surface-residue taxa on the same object;
+# rank preserved (ovicaprine milk held at Caprinae); a control observation that CONTRADICTS a residue;
+# proteomic evidence supporting a HISTORICAL interpretation (use), kept separate from material claims.
+
+@prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix crminf: <http://www.cidoc-crm.org/extensions/crminf/> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix ncbi:   <http://purl.obolibrary.org/obo/NCBITaxon_> .
+@prefix g:      <https://codicum.eu/data/fiddyment-2021/> .
+
+g:MS632 a codhmo:HeritageObject ;
+    rdfs:label "Wellcome Collection Western MS. 632, parchment birth girdle, England, late 15th/early 16th c."@en ;
+    crm:P1_is_identified_by g:MS632-id ;
+    crm:P46_is_composed_of g:parchment-support , g:surface-residue .
+g:MS632-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "Wellcome Western MS. 632" .
+
+g:parchment-support a codhmo:MaterialLayer ;
+    rdfs:label "Parchment roll, four stitched strips"@en ;
+    crm:P45_consists_of codhmo:parchment .
+g:surface-residue a codhmo:MaterialLayer ;
+    rdfs:label "Stains and worn surface deposits"@en .
+    # Deliberately no crm:P45: what the residue is, is the question.
+
+g:team a crm:E74_Group ; rdfs:label "Fiddyment et al. research team"@en ;
+    dcterms:source <https://doi.org/10.1098/rsos.202055> .
+g:before-capture a crm:E52_Time-Span ; crm:P82b_end_of_the_end "2026-09-17T00:00:00"^^xsd:dateTime .
+
+# Non-invasive eraser sampling: the "sample" is the eraser crumb, not excised object matter.
+g:sampling-WT04 a crmsci:S2_Sample_Taking ;
+    rdfs:comment "Dry non-invasive PVC-eraser sampling."@en ;
+    crmsci:O3_sampled_from g:surface-residue ; crmsci:O4_sampled_at g:region-WT04 ; crmsci:O5_removed g:WT04 ;
+    crm:P14_carried_out_by g:team ; crm:P4_has_time-span g:before-capture .
+g:sampling-WT06 a crmsci:S2_Sample_Taking ;
+    rdfs:comment "Dry non-invasive PVC-eraser sampling."@en ;
+    crmsci:O3_sampled_from g:parchment-support ; crmsci:O4_sampled_at g:region-WT06 ; crmsci:O5_removed g:WT06 ;
+    crm:P14_carried_out_by g:team ; crm:P4_has_time-span g:before-capture .
+g:sampling-WT07 a crmsci:S2_Sample_Taking ;
+    rdfs:comment "Dry non-invasive PVC-eraser sampling."@en ;
+    crmsci:O3_sampled_from g:surface-residue ; crmsci:O4_sampled_at g:region-WT07 ; crmsci:O5_removed g:WT07 ;
+    crm:P14_carried_out_by g:team ; crm:P4_has_time-span g:before-capture .
+g:region-WT04 a crm:E53_Place ; rdfs:label "Location WT04 (source figure)"@en .
+g:region-WT06 a crm:E53_Place ; rdfs:label "Location WT06 (source figure)"@en .
+g:region-WT07 a crm:E53_Place ; rdfs:label "Location WT07 (source figure)"@en .
+
+g:WT04 a crmsci:S13_Sample ; crm:P1_is_identified_by g:WT04-id ; crmsci:O5i_was_removed_by g:sampling-WT04 .
+g:WT06 a crmsci:S13_Sample ; crm:P1_is_identified_by g:WT06-id ; crmsci:O5i_was_removed_by g:sampling-WT06 .
+g:WT07 a crmsci:S13_Sample ; crm:P1_is_identified_by g:WT07-id ; crmsci:O5i_was_removed_by g:sampling-WT07 .
+g:WT04-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "WT04" .
+g:WT06-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "WT06" .
+g:WT07-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "WT07" .
+
+# --- Observations ---
+g:obs-zooms a crmsci:S4_Single_Observation ;
+    rdfs:label "MALDI-TOF ZooMS: all eight eraser samples give sheep collagen markers (e.g. WT06)"@en ;
+    crmsci:O8_observed g:WT06 ;
+    codhmo:supports g:T-support-sheep .
+g:obs-mrjp1 a crmsci:S4_Single_Observation ;
+    rdfs:label "WT04: three peptides unique to Major royal jelly protein 1 (Apis mellifera, O18330)"@en ;
+    crmsci:O8_observed g:WT04 ;
+    codhmo:supports g:R-honey , g:HI-used-as-girdle .
+g:obs-casein a crmsci:S4_Single_Observation ;
+    rdfs:label "WT07: ovicaprine casein (milk)"@en ;
+    crmsci:O8_observed g:WT07 ;
+    codhmo:supports g:R-milk ;
+    codhmo:compatibleWith g:HI-used-as-girdle .
+g:obs-eggyolk a crmsci:S4_Single_Observation ;
+    rdfs:label "Egg yolk peptides detected in girdle samples"@en ;
+    codhmo:compatibleWith g:R-eggyolk .
+g:obs-control a crmsci:S4_Single_Observation ;
+    rdfs:label "Two of the egg-yolk peptides also found in the control sample"@en ;
+    codhmo:contradicts g:R-eggyolk .
+
+# --- Material hypotheses: support vs residues ---
+g:T-support-sheep a codhmo:TaxonomicHypothesis ;
+    rdfs:label "Parchment support is sheepskin"@en ; crminf:J4_that g:p-sheep .
+g:p-sheep a crminf:I4_Proposition_Set ;
+    rdf:subject g:parchment-support ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9940 .
+
+g:R-honey a codhmo:TaxonomicHypothesis ;
+    rdfs:label "Surface residue includes honey (honeybee product)"@en ; crminf:J4_that g:p-honey .
+g:p-honey a crminf:I4_Proposition_Set ;
+    rdf:subject g:surface-residue ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:7460 .
+
+g:R-milk a codhmo:TaxonomicHypothesis ;
+    rdfs:label "Surface residue includes ovicaprine milk (sheep or goat, held at Caprinae)"@en ; crminf:J4_that g:p-milk .
+g:p-milk a crminf:I4_Proposition_Set ;
+    rdf:subject g:surface-residue ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9963 .
+
+g:R-eggyolk a codhmo:MaterialHypothesis ;
+    rdfs:label "Surface residue includes egg yolk"@en ; crminf:J4_that g:p-eggyolk .
+g:p-eggyolk a crminf:I4_Proposition_Set ; rdfs:label "Egg yolk is present in the surface residue."@en .
+
+# --- Historical interpretation: use, supported by residues, independent of the support taxon ---
+g:HI-used-as-girdle a codhmo:HistoricalInterpretation ;
+    rdfs:label "MS. 632 was physically used as a birth girdle"@en ;
+    crminf:J4_that g:p-used .
+g:p-used a crminf:I4_Proposition_Set ;
+    rdfs:label "The roll was worn or handled during childbirth, depositing the observed residues."@en .

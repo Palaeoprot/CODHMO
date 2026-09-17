@@ -92,3 +92,15 @@ def test_charter_samples_trace_to_their_layers():
         ("ILLUSTRATIVE-C2-ink", base + "ink-layer"),
         ("ILLUSTRATIVE-C2-seal", base + "seal"),
     }
+
+
+def test_birth_girdle_separates_support_residue_and_use():
+    g = load("fiddyment-2021-birth-girdle")
+    by_hyp = {row[1]: row[2].removeprefix(NCBI) for row in ask(g, "q04")
+              if row[1].startswith("https://codicum.eu/data/fiddyment-2021/")}
+    short = {k.rsplit("/", 1)[1]: v for k, v in by_hyp.items()}
+    assert short == {"T-support-sheep": "9940", "R-honey": "7460", "R-milk": "9963"}
+    assert ask(g, "q05") == set()
+    contradicted = {h.rsplit("/", 1)[1] for h, _ in ask(g, "q08")}
+    assert contradicted == {"R-eggyolk"}  # control blank weakens egg yolk
+    assert ask(g, "q09") == set()        # the use interpretation now has evidence
