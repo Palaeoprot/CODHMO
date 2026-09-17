@@ -113,8 +113,14 @@ ZooMS resolves a taxon, not the animal's age. The parchment-only rule `codhmo:ru
 - **Competing:** alternatives that exclude each other must be marked with `hasCompetingHypothesis`. For example, one leather sample whose markers are shared by Panthera, Mustelidae and Hyaenidae (Brandt et al. 2023, sample 34) can only come from one of them. This contrasts with a possible mixed glue (D15).
 - **Failed identifications:** these are recorded as observations, for example "12 of 45 samples unidentified", not omitted.
 
+### D21. Sensitivity flag for human-derived material
+Human-derived material is flagged with `codhmo:hasSensitivity codhmo:sensitivity-human-derived` (SKOS `SensitivityScheme`).
+- **A handling statement, not a scientific claim:** it is asserted directly, unlike taxa. It applies as soon as a human source is even *hypothesised*, because the ethical obligation doesn't wait for certainty.
+- **Enforced:** SHACL requires the flag on both the material and the belief whenever a biological-source proposition points to Homo (9605) or *Homo sapiens* (9606). The Scythian quiver object is also flagged.
+- **Not triggered by contamination:** incidental modern human proteins (keratins, handling) are recorded as a contaminant role, not a biological source.
+- **Extensible:** the same scheme can later hold other flags, such as sacred objects or restricted collections.
+
 ## Open items
-- Policy on human-derived material (e.g. Scythian quiver, human skin): sensitivity or ethics flag not yet decided.
 - IN-A001 sampler and date (the Pepys conformance test is expected to fail until they are supplied).
 - Real analytical values to replace the PLACEHOLDERs in the Pepys example.
 - Namespace IRI (`https://codicum.eu/ontology/codhmo#` is provisional).

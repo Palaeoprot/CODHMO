@@ -278,3 +278,21 @@ codhmo:rule-parchment-bos-is-calf a crminf:I3_Inference_Logic ;
     skos:definition "If a PARCHMENT support has biological source Bos (NCBITaxon_9903 or a descendant), the skin came from a calf: workable parchment cannot be made from cattle skin older than about 8 weeks."@en ;
     skos:scopeNote "Applies to parchment only. It does NOT apply to Bos leather, glue or other collagen products, where adult hide is normal. Apply via crminf:I5_Inference_Making: crminf:J3_applied this rule, crminf:J1_used_as_premise the taxonomic belief, crminf:J2_concluded_that the calfskin belief."@en ;
     dcterms:source "Domain rule supplied by M. Collins, 2026-09-17."@en .
+
+#################################################################
+# Sensitivity (handling / ethics flags)
+#################################################################
+
+codhmo:hasSensitivity a owl:ObjectProperty ;
+    rdfs:label "has sensitivity"@en ;
+    skos:definition "Flags a material body, heritage object or belief as requiring special handling, display or publication care. A precautionary handling statement, not a scientific claim: it is asserted directly, and applies even when the triggering identification is only a hypothesis."@en ;
+    rdfs:range skos:Concept .
+
+codhmo:SensitivityScheme a skos:ConceptScheme ;
+    skos:prefLabel "CODHMO sensitivity flags"@en .
+
+codhmo:sensitivity-human-derived a skos:Concept ;
+    skos:inScheme codhmo:SensitivityScheme ; skos:topConceptOf codhmo:SensitivityScheme ;
+    skos:prefLabel "human-derived material"@en ;
+    skos:definition "Material that is, or is hypothesised to be, derived from human remains (skin, bone, hair, tissue). Requires ethical review before sampling, imaging, display or data publication, and respectful description."@en ;
+    skos:scopeNote "Triggered by any biological-source proposition pointing to Homo (NCBITaxon_9605) or Homo sapiens (NCBITaxon_9606). Incidental modern human contamination (keratins, handling) is recorded as a contaminant role, not a biological source, and does not trigger the flag."@en .

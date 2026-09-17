@@ -21,9 +21,11 @@ y:before-capture a crm:E52_Time-Span ; crm:P82b_end_of_the_end "2026-09-17T00:00
 
 # Sample 7: quiver, Ilyinka kurgan 4 burial 2: human skin
 y:quiver7 a codhmo:HeritageObject ; rdfs:label "Leather quiver, Ilyinka, kurgan 4, burial 2"@en ;
+    codhmo:hasSensitivity codhmo:sensitivity-human-derived ;
     crm:P1_is_identified_by y:quiver7-id ; crm:P46_is_composed_of y:quiver7-leather .
 y:quiver7-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "Ilyinka k4 b2 quiver" .
-y:quiver7-leather a codhmo:MaterialLayer ; rdfs:label "Quiver leather"@en .
+y:quiver7-leather a codhmo:MaterialLayer ; rdfs:label "Quiver leather"@en ;
+    codhmo:hasSensitivity codhmo:sensitivity-human-derived .
 y:sampling-7 a crmsci:S2_Sample_Taking ;
     crmsci:O3_sampled_from y:quiver7-leather ; crmsci:O4_sampled_at y:region-7 ; crmsci:O5_removed y:S7 ;
     crm:P14_carried_out_by y:team ; crm:P4_has_time-span y:before-capture .
@@ -32,7 +34,8 @@ y:S7 a crmsci:S13_Sample ; crm:P1_is_identified_by y:S7-id ; crmsci:O5i_was_remo
 y:S7-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "7" .
 y:obs-7 a crmsci:S4_Single_Observation ; rdfs:label "ZooMS markers identifying human skin (source Fig 6)"@en ;
     crmsci:O8_observed y:S7 ; codhmo:supports y:T7-human .
-y:T7-human a codhmo:TaxonomicHypothesis ; rdfs:label "Quiver leather is human skin"@en ; crminf:J4_that y:p7 .
+y:T7-human a codhmo:TaxonomicHypothesis ; rdfs:label "Quiver leather is human skin"@en ; crminf:J4_that y:p7 ;
+    codhmo:hasSensitivity codhmo:sensitivity-human-derived .
 y:p7 a crminf:I4_Proposition_Set ;
     rdf:subject y:quiver7-leather ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object ncbi:9606 .
 

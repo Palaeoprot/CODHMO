@@ -121,3 +121,24 @@ def test_step6_examples_have_no_violations(name):
     data = Graph().parse(ROOT / "examples" / f"{name}.ttl")
     conforms, _, text = validate(data + ont, shacl_graph=shapes, inference="rdfs", allow_warnings=True)
     assert conforms, text
+
+
+def _scythian():
+    return Graph().parse(ROOT / "examples" / "brandt-2023-scythian-leather.ttl")
+
+
+def test_human_derived_flag_present_passes():
+    ont = Graph().parse(ROOT / "ontology" / "codhmo.ttl")
+    shapes = Graph().parse(ROOT / "shapes" / "codhmo-core-shapes.ttl")
+    conforms, _, text = validate(_scythian() + ont, shacl_graph=shapes, inference="rdfs", allow_warnings=True)
+    assert conforms, text
+
+
+@pytest.mark.parametrize("node", ["quiver7-leather", "T7-human"])
+def test_human_derived_flag_missing_fails(node):
+    from rdflib import URIRef
+    g = _scythian()
+    g.remove((URIRef("https://codicum.eu/data/brandt-2023/" + node),
+              URIRef("https://codicum.eu/ontology/codhmo#hasSensitivity"), None))
+    conforms, _ = _validate(g)
+    assert not conforms
