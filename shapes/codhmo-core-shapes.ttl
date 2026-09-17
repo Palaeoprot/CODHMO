@@ -191,3 +191,27 @@ shapes:HumanDerivedSensitivityShape a sh:NodeShape ;
                 { BIND (?material AS ?value) } UNION { BIND (?belief AS ?value) }
                 FILTER NOT EXISTS { ?value codhmo:hasSensitivity codhmo:sensitivity-human-derived }
             }""" ] .
+
+# Former rdfs:domain/range, now reported instead of inferred (D22) ----------
+shapes:CompetingHypothesisShape a sh:NodeShape ;
+    sh:targetSubjectsOf codhmo:hasCompetingHypothesis ;
+    sh:targetObjectsOf codhmo:hasCompetingHypothesis ;
+    sh:class crminf:I2_Belief ;
+    sh:message "codhmo:hasCompetingHypothesis MUST link two crminf:I2_Belief nodes." .
+
+shapes:ConfiguredStateSubjectShape a sh:NodeShape ;
+    sh:targetSubjectsOf codhmo:configuredMaterialState ;
+    sh:class codhmo:GenerationConfiguration ;
+    sh:message "codhmo:configuredMaterialState MUST be stated on a GenerationConfiguration, never on a sample or material." .
+
+shapes:PTMObservationLinkShape a sh:NodeShape ;
+    sh:targetSubjectsOf codhmo:hasPTMObservation ;
+    sh:class codhmo:PeptideIdentification ;
+    sh:property [ sh:path codhmo:hasPTMObservation ; sh:class codhmo:PTMObservation ;
+        sh:message "codhmo:hasPTMObservation MUST point to a PTMObservation." ] ;
+    sh:message "codhmo:hasPTMObservation MUST be stated on a PeptideIdentification." .
+
+shapes:MaterialPropertySubjectShape a sh:NodeShape ;
+    sh:targetSubjectsOf codhmo:hasMaterialState , codhmo:hasSourceTissue ;
+    sh:or ( [ sh:class crmsci:S10_Material_Substantial ] [ sh:class crmsci:S13_Sample ] ) ;
+    sh:message "codhmo:hasMaterialState / hasSourceTissue MUST be stated on a material body or sample." .

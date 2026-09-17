@@ -18,6 +18,7 @@
 
 <https://codicum.eu/ontology/codhmo>
     a owl:Ontology ;
+    skos:scopeNote "CODHMO properties carry no rdfs:domain/rdfs:range: under RDFS inference those silently retype misused subjects/objects. Intended subjects/objects are stated in definitions and enforced by SHACL (D10, D22)."@en ;
     dcterms:title "CODICUM Heritage Material Ontology (CODHMO) — Core"@en ;
     dcterms:description "Thin domain layer linking heritage objects, material layers, samples, analyses, evidence and competing hypotheses. Reuses CIDOC CRM, CRMsci, CRMinf and PROV-O; defines only what they lack."@en ;
     owl:versionInfo "0.1-draft" ;
@@ -117,37 +118,27 @@ codhmo:HistoricalInterpretation a owl:Class ;
 codhmo:hasComponentMaterial a owl:ObjectProperty ;
     rdfs:label "has component material"@en ;
     skos:definition "Relates a material body to a constituent material body in a formulation (e.g. glue to its starch component). Composition is an interpretation, so it is asserted only inside a proposition."@en ;
-    rdfs:domain crmsci:S10_Material_Substantial ;
-    rdfs:range crmsci:S10_Material_Substantial ;
     skos:scopeNote "Formulation modelling is provisional (handover §17)."@en .
 
 codhmo:hasBiologicalSource a owl:ObjectProperty ;
     rdfs:label "has biological source"@en ;
     skos:definition "Relates a material body to an NCBI Taxonomy node, given as the numeric-ID IRI http://purl.obolibrary.org/obo/NCBITaxon_<taxid>. Asserted only inside the proposition of a hypothesis, never as a direct fact about a sample."@en ;
-    skos:scopeNote "Numeric NCBI taxids are the only identifier. Genus/species names are labels, never keys: names are revised, the numeric node (and its higher-rank ancestors) is stable. State the rank the evidence supports; do not promote a family taxid to a genus or species."@en ;
-    rdfs:domain crmsci:S10_Material_Substantial .
+    skos:scopeNote "Numeric NCBI taxids are the only identifier. Genus/species names are labels, never keys: names are revised, the numeric node (and its higher-rank ancestors) is stable. State the rank the evidence supports; do not promote a family taxid to a genus or species."@en .
 
 codhmo:hasSourceTissue a owl:ObjectProperty ;
     rdfs:label "has source tissue"@en ;
-    skos:definition "Relates a material body to an anatomical source, given as an external IRI (e.g. UBERON)."@en ;
-    rdfs:domain crmsci:S10_Material_Substantial .
+    skos:definition "Relates a material body to an anatomical source, given as an external IRI (e.g. UBERON)."@en .
 
 codhmo:hasMaterialState a owl:ObjectProperty ;
     rdfs:label "has material state"@en ;
-    skos:definition "Relates a material body to its physical or chemical state, drawn from the codhmo material-state scheme."@en ;
-    rdfs:domain crmsci:S10_Material_Substantial ;
-    rdfs:range skos:Concept .
+    skos:definition "Relates a material body to its physical or chemical state, drawn from the codhmo material-state scheme."@en .
 
 codhmo:configuredMaterialState a owl:ObjectProperty ;
     rdfs:label "configured material state"@en ;
-    skos:definition "Relates a generation configuration to the material state it models. Distinct from codhmo:hasMaterialState."@en ;
-    rdfs:domain codhmo:GenerationConfiguration ;
-    rdfs:range skos:Concept .
+    skos:definition "Relates a generation configuration to the material state it models. Distinct from codhmo:hasMaterialState."@en .
 
 codhmo:hasPTMObservation a owl:ObjectProperty ;
-    rdfs:label "has PTM observation"@en ;
-    rdfs:domain codhmo:PeptideIdentification ;
-    rdfs:range codhmo:PTMObservation .
+    rdfs:label "has PTM observation"@en .
 
 codhmo:evidentialRelation a owl:ObjectProperty ;
     rdfs:label "evidential relation"@en ;
@@ -171,9 +162,7 @@ codhmo:compatibleWith a owl:ObjectProperty ;
 
 codhmo:hasCompetingHypothesis a owl:ObjectProperty, owl:SymmetricProperty ;
     rdfs:label "has competing hypothesis"@en ;
-    skos:definition "Relates two beliefs that offer alternative answers to the same question. Neither is deleted when one appears stronger."@en ;
-    rdfs:domain crminf:I2_Belief ;
-    rdfs:range crminf:I2_Belief .
+    skos:definition "Relates two beliefs that offer alternative answers to the same question. Neither is deleted when one appears stronger."@en .
 
 #################################################################
 # SKOS: material-state scheme
@@ -241,9 +230,7 @@ codhmo:ink a skos:Concept, crm:E57_Material ;
 
 codhmo:hasComponentRole a owl:ObjectProperty ;
     rdfs:label "has component role"@en ;
-    skos:definition "Relates a constituent material body to the role it plays in a formulation, drawn from codhmo:ComponentRoleScheme. A role is an interpretation (the same protein can be binder, contaminant or evidence of use), so it is asserted only inside a proposition."@en ;
-    rdfs:domain crmsci:S10_Material_Substantial ;
-    rdfs:range skos:Concept .
+    skos:definition "Relates a constituent material body to the role it plays in a formulation, drawn from codhmo:ComponentRoleScheme. A role is an interpretation (the same protein can be binder, contaminant or evidence of use), so it is asserted only inside a proposition."@en .
 
 codhmo:ComponentRoleScheme a skos:ConceptScheme ;
     skos:prefLabel "CODHMO formulation component roles"@en .
@@ -285,8 +272,7 @@ codhmo:rule-parchment-bos-is-calf a crminf:I3_Inference_Logic ;
 
 codhmo:hasSensitivity a owl:ObjectProperty ;
     rdfs:label "has sensitivity"@en ;
-    skos:definition "Flags a material body, heritage object or belief as requiring special handling, display or publication care. A precautionary handling statement, not a scientific claim: it is asserted directly, and applies even when the triggering identification is only a hypothesis."@en ;
-    rdfs:range skos:Concept .
+    skos:definition "Flags a material body, heritage object or belief as requiring special handling, display or publication care. A precautionary handling statement, not a scientific claim: it is asserted directly, and applies even when the triggering identification is only a hypothesis."@en .
 
 codhmo:SensitivityScheme a skos:ConceptScheme ;
     skos:prefLabel "CODHMO sensitivity flags"@en .

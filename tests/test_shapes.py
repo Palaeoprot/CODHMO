@@ -58,6 +58,10 @@ BROKEN = [
     ("generation without config", "ex:gen prov:used ex:cfg .", ""),
     ("asserted component role", "", "ex:layer codhmo:hasComponentRole codhmo:role-binder ."),
     ("asserted component", "", "ex:layer codhmo:hasComponentMaterial ex:layer ."),
+    ("competing link from peptide", "", "ex:pep codhmo:hasCompetingHypothesis ex:h1 ."),
+    ("configured state on sample", "", "ex:s codhmo:configuredMaterialState codhmo:Denatured ."),
+    ("PTM link from search", "", "ex:search codhmo:hasPTMObservation ex:pep ."),
+    ("material state on observation", "", "ex:pep codhmo:hasMaterialState codhmo:Denatured ."),
     ("unversioned software", 'ex:seqdb-gen dcterms:hasVersion "x" .', ""),
 ]
 
@@ -86,7 +90,7 @@ def test_broken_graph_fails(name, remove, add):
     assert not conforms, f"{name} should violate a MUST rule"
 
 
-@pytest.mark.xfail(reason="IN-A001 sampler (crm:P14) and date (crm:P4) not yet supplied", strict=True)
+@pytest.mark.xfail(reason="IN-A001 not yet sampled: sampler (crm:P14) and date (crm:P4) will exist after processing", strict=True)
 def test_pepys_instance_has_no_violations():
     ont = Graph().parse(ROOT / "ontology" / "codhmo.ttl")
     shapes = Graph().parse(ROOT / "shapes" / "codhmo-core-shapes.ttl")

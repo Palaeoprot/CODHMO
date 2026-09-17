@@ -120,14 +120,19 @@ Human-derived material is flagged with `codhmo:hasSensitivity codhmo:sensitivity
 - **Not triggered by contamination:** incidental modern human proteins (keratins, handling) are recorded as a contaminant role, not a biological source.
 - **Extensible:** the same scheme can later hold other flags, such as sacred objects or restricted collections.
 
+### D22. No rdfs:domain or rdfs:range on CODHMO properties
+Every CODHMO property's domain and range was removed. Under RDFS inference they don't check anything; they retype whatever the property is misused on.
+- **Examples:** `hasCompetingHypothesis` on a peptide would have made the peptide a belief, and `configuredMaterialState` on a sample would have made the sample a database configuration.
+- **Replacement:** intended subjects and objects are stated in each definition and enforced by SHACL, with broken-graph tests.
+- **Only wanted inference kept:** `owl:SymmetricProperty` on `hasCompetingHypothesis`.
+- **Why the proposition-only properties were stripped too:** the domains on `hasBiologicalSource`, `hasComponentMaterial` and `hasComponentRole` never fired, but they looked like constraints.
+
 ## Open items
 - Palandri et al. 2024 (Zenodo 18772648): MA01-MA20 sample-to-fragment/location mapping requested from the author (2026-09-17); the Missale example holds one representative spine sample until then.
-- IN-A001 sampler and date (the Pepys conformance test is expected to fail until they are supplied).
+- IN-A001 has not been sampled yet; its sampler, date and results will be added after processing, then tested with the researcher.
 - Real analytical values to replace the PLACEHOLDERs in the Pepys example.
 - Namespace IRI (`https://codicum.eu/ontology/codhmo#` is provisional).
-- Review of the remaining RDFS domains and ranges (D10).
 - PSI-MS/UNIMOD alignment for peptide and PTM properties.
 - Getty AAT matches for the material concepts.
 - Real charter case to replace the illustrative one; AAT match for seal wax.
 - Kasso binder taxon once proteomics is published; the fish taxon in ÆIN 656 at the rank the data support.
-- Reference papers with mixed binders (e.g. Zaggia et al. 2026): the library copy is a failed web capture and needs re-downloading.
