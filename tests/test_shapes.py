@@ -15,6 +15,8 @@ PREFIXES = """
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix ncbi:   <http://purl.obolibrary.org/obo/NCBITaxon_> .
 @prefix ex:     <https://example.org/> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
 """
 
 VALID = """
@@ -22,7 +24,12 @@ ex:ms a codhmo:HeritageObject ; crm:P1_is_identified_by ex:ms-id ; crm:P46_is_co
 ex:layer a codhmo:MaterialLayer ; crm:P45_consists_of codhmo:collagen-adhesive ;
     codhmo:hasMaterialState codhmo:Denatured .
 ex:st a crmsci:S2_Sample_Taking ; crmsci:O5_removed ex:s ; crmsci:O3_sampled_from ex:layer ;
-    crmsci:O4_sampled_at ex:region .
+    crmsci:O4_sampled_at ex:region ; crm:P14_carried_out_by ex:person ; crm:P4_has_time-span ex:ts .
+ex:person a crm:E21_Person .
+ex:ts a crm:E52_Time-Span ; crm:P82a_begin_of_the_begin "2026-01-01T00:00:00"^^xsd:dateTime ;
+    crm:P82b_end_of_the_end "2026-01-01T23:59:59"^^xsd:dateTime .
+ex:p1 a crminf:I4_Proposition_Set ; rdf:predicate codhmo:hasBiologicalSource ;
+    rdf:object <http://purl.obolibrary.org/obo/NCBITaxon_9986> .
 ex:s a crmsci:S13_Sample ; crm:P1_is_identified_by ex:s-id ; crmsci:O5i_was_removed_by ex:st .
 ex:gen a codhmo:DatabaseGeneration ; prov:wasAssociatedWith ex:seqdb-gen ; prov:used ex:cfg .
 ex:seqdb-gen a prov:SoftwareAgent ; dcterms:hasVersion "x" .
@@ -38,6 +45,8 @@ BROKEN = [
     ("object without identifier", "ex:ms crm:P1_is_identified_by ex:ms-id .", ""),
     ("orphan material layer", "ex:ms crm:P46_is_composed_of ex:layer .", ""),
     ("sample taking without sample", "ex:st crmsci:O5_removed ex:s .", ""),
+    ("sampling without actor", "ex:st crm:P14_carried_out_by ex:person .", ""),
+    ("sampling without date", "ex:st crm:P4_has_time-span ex:ts .", ""),
     ("sample without identifier", "ex:s crm:P1_is_identified_by ex:s-id .", ""),
     ("state outside scheme", "", "ex:layer codhmo:hasMaterialState ex:crunchy ."),
     ("species on sample", "", "ex:s codhmo:hasBiologicalSource ncbi:9986 ."),
@@ -75,6 +84,7 @@ def test_broken_graph_fails(name, remove, add):
     assert not conforms, f"{name} should violate a MUST rule"
 
 
+@pytest.mark.xfail(reason="IN-A001 sampler (crm:P14) and date (crm:P4) not yet supplied", strict=True)
 def test_pepys_instance_has_no_violations():
     ont = Graph().parse(ROOT / "ontology" / "codhmo.ttl")
     shapes = Graph().parse(ROOT / "shapes" / "codhmo-core-shapes.ttl")
@@ -88,3 +98,13 @@ def test_pepys_taxa_only_inside_propositions():
     from rdflib import URIRef
     data = Graph().parse(ROOT / "examples" / "pepys-IN-A001.ttl")
     assert not list(data.triples((None, URIRef("https://codicum.eu/ontology/codhmo#hasBiologicalSource"), None)))
+
+
+@pytest.mark.parametrize("bad", ['"Oryctolagus cuniculus"', "<https://www.gbif.org/species/2436691>",
+                                 "<http://purl.obolibrary.org/obo/NCBITaxon_rabbit>"])
+def test_taxon_must_be_numeric_ncbi_iri(bad):
+    g = Graph().parse(data=PREFIXES + VALID + f"""
+        ex:p1 a crminf:I4_Proposition_Set ; rdf:predicate codhmo:hasBiologicalSource ; rdf:object {bad} .""",
+        format="turtle")
+    conforms, _ = _validate(g)
+    assert not conforms

@@ -11,6 +11,8 @@
 @prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix sh:     <http://www.w3.org/ns/shacl#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 
 # 1. Heritage object ------------------------------------------------------
 shapes:HeritageObjectShape a sh:NodeShape ;
@@ -44,7 +46,23 @@ shapes:SampleTakingShape a sh:NodeShape ;
         sh:message "A sample taking SHOULD record what it sampled from (crmsci:O3)." ] ;
     sh:property [
         sh:path crmsci:O4_sampled_at ; sh:minCount 1 ; sh:severity sh:Warning ;
-        sh:message "A sample taking SHOULD record where it sampled (crmsci:O4)." ] .
+        sh:message "A sample taking SHOULD record where it sampled (crmsci:O4)." ] ;
+    sh:property [
+        sh:path crm:P14_carried_out_by ; sh:minCount 1 ;
+        sh:or ( [ sh:class crm:E39_Actor ] [ sh:class crm:E21_Person ] [ sh:class crm:E74_Group ] ) ;
+        sh:message "A sample taking MUST record who carried it out (crm:P14, an E39 Actor)." ] ;
+    sh:property [
+        sh:path crm:P4_has_time-span ; sh:minCount 1 ; sh:maxCount 1 ; sh:class crm:E52_Time-Span ;
+        sh:message "A sample taking MUST record when it happened (crm:P4, one E52 Time-Span)." ] .
+
+shapes:TimeSpanShape a sh:NodeShape ;
+    sh:targetObjectsOf crm:P4_has_time-span ;
+    sh:property [
+        sh:path crm:P82a_begin_of_the_begin ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
+        sh:message "A time-span MUST give crm:P82a_begin_of_the_begin as xsd:dateTime." ] ;
+    sh:property [
+        sh:path crm:P82b_end_of_the_end ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:dateTime ;
+        sh:message "A time-span MUST give crm:P82b_end_of_the_end as xsd:dateTime (equal to P82a for a known instant)." ] .
 
 # 4. Sample ---------------------------------------------------------------
 shapes:SampleShape a sh:NodeShape ;
@@ -118,3 +136,17 @@ shapes:SoftwareAgentShape a sh:NodeShape ;
     sh:property [
         sh:path dcterms:hasVersion ; sh:minCount 1 ;
         sh:message "Software MUST carry a version (dcterms:hasVersion)." ] .
+
+# Taxon identifiers: numeric NCBI taxid IRIs only ---------------------------
+shapes:NCBITaxonIdShape a sh:NodeShape ;
+    sh:targetClass crminf:I4_Proposition_Set ;
+    sh:sparql [
+        sh:message "A biological-source proposition MUST use a numeric NCBI taxid IRI (http://purl.obolibrary.org/obo/NCBITaxon_<digits>), not a name." ;
+        sh:prefixes [ sh:declare
+            [ sh:prefix "rdf" ; sh:namespace "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xsd:anyURI ] ,
+            [ sh:prefix "codhmo" ; sh:namespace "https://codicum.eu/ontology/codhmo#"^^xsd:anyURI ] ] ;
+        sh:select """
+            SELECT $this ?value WHERE {
+                $this rdf:predicate codhmo:hasBiologicalSource ; rdf:object ?value .
+                FILTER (!isIRI(?value) || !REGEX(STR(?value), "^http://purl[.]obolibrary[.]org/obo/NCBITaxon_[0-9]+$"))
+            }""" ] .

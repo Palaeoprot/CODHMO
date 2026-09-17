@@ -123,7 +123,8 @@ codhmo:hasComponentMaterial a owl:ObjectProperty ;
 
 codhmo:hasBiologicalSource a owl:ObjectProperty ;
     rdfs:label "has biological source"@en ;
-    skos:definition "Relates a material body to an external taxon IRI (NCBI, GBIF, CoL). Asserted only inside the proposition of a hypothesis, never as a direct fact about a sample."@en ;
+    skos:definition "Relates a material body to an NCBI Taxonomy node, given as the numeric-ID IRI http://purl.obolibrary.org/obo/NCBITaxon_<taxid>. Asserted only inside the proposition of a hypothesis, never as a direct fact about a sample."@en ;
+    skos:scopeNote "Numeric NCBI taxids are the only identifier. Genus/species names are labels, never keys: names are revised, the numeric node (and its higher-rank ancestors) is stable. State the rank the evidence supports; do not promote a family taxid to a genus or species."@en ;
     rdfs:domain crmsci:S10_Material_Substantial .
 
 codhmo:hasSourceTissue a owl:ObjectProperty ;
