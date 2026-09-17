@@ -7,7 +7,7 @@ Leaf,class,manuscript,"A folio",defer-to-CODICUM,crm:E22 + crm:P2_has_type,type 
 Binding,class,manuscript,"Binding structure of a codex",defer-to-CODICUM,crm:E22 + crm:P2_has_type,type not class,,,,,draft,
 MaterialLayer,class,core,"A spatially bounded body of material on or in a heritage object (adhesive, coating, ink, sizing, repair)",subclass,crmsci:S10_Material_Substantial,rdfs:subClassOf crmsci:S10,,,"must be linked to a HeritageObject",adhesive layer under fragment 4,draft,"DECIDED 2026-09-17: S10"
 Material,class,core,"A kind of material (not a quantity of it)",reuse,crm:E57_Material,equivalent,,,,animal glue,draft,"E57 is a type; material *instances* are layers/samples"
-Adhesive,class,materials,"Material type used to bond",reuse-as-type,crm:E57_Material (instance/SKOS),skos:Concept under E57,,,,,draft,"Model material hierarchy as SKOS scheme, not OWL classes"
+Adhesive,class,materials,"Material type used to bond",reuse-as-type,crm:E57_Material (instance/SKOS),skos:Concept under E57,,,,,draft,"DECIDED 2026-09-17: SKOS scheme codhmo-materials; concepts typed crm:E57, AAT via skos:closeMatch/exactMatch"
 CollagenAdhesive,class,materials,"Adhesive whose binder is collagen-derived",reuse-as-type,crm:E57_Material (SKOS),skos:broader Adhesive,,,,rabbit-skin glue,draft,
 StarchAdhesive,class,materials,"Adhesive whose binder is starch",reuse-as-type,crm:E57_Material (SKOS),skos:broader Adhesive,,,,flour paste,draft,
 ProteinBinder,class,materials,"Proteinaceous binder",reuse-as-type,crm:E57_Material (SKOS),,,,,egg glair,draft,
@@ -18,7 +18,7 @@ Sample,class,core,"Physical sample removed for analysis",reuse,crmsci:S13_Sample
 SubSample,class,core,"Sample removed from a sample",reuse,crmsci:S13_Sample + crmsci:O3_sampled_from S13,no new class,,,,,draft,
 SamplingActivity,class,core,"Event that removed a sample",reuse,crmsci:S2_Sample_Taking,equivalent,,,"must have O5 removed; should have O3 sampled from",sampling of IN-A001,draft,"Missing from handover class list; added"
 SamplingRegion,class,spatial,"Region on object where sampling occurred",reuse,crm:E53_Place / crmsci:O4_sampled_at,,,,,under fragment 4 p.5,draft,"Image coords via CRMdig later"
-AnalyticalActivity,class,core,"Scientific examination of a sample",reuse,crmsci:S4_Observation,equivalent/subclass,,,,LC-MS/MS run,draft,
+AnalyticalActivity,class,core,"Scientific examination of a sample",reuse,crmsci:S4_Single_Observation,equivalent/subclass,,,,LC-MS/MS run,draft,
 DatabaseGeneration,class,proteomics,"Computational generation of a search database",new+align,prov:Activity,rdfs:subClassOf prov:Activity (and crm:E65?),,,"must prov:used software agent + config; must prov:generated database",seqdb-gen run,draft,
 DatabaseSearch,class,proteomics,"Search of spectra against a database",new+align,prov:Activity,rdfs:subClassOf prov:Activity,,,"must prov:used database + spectra",pSAGEd search,draft,
 PeptideIdentification,class,proteomics,"A PSM/peptide-level result",new+align,prov:Entity (+ PSI-MS terms),rdfs:subClassOf prov:Entity,,,"must have sequence + score + source search",PEP001,draft,"Check PSI-MS / mzIdentML semantics first"
@@ -28,7 +28,7 @@ TaxonomicHypothesis,class,core,"Proposition about biological source",reuse,crmin
 ManufacturingHypothesis,class,core,"Proposition about process/formulation",reuse,crminf:I2_Belief,subclass,,,,,draft,
 HistoricalInterpretation,class,core,"Proposition about when/why material was applied",reuse,crminf:I2_Belief,subclass,,,,HI1 Pepys-period mounting,draft,
 Evidence,class,core,"Observation used as premise",reuse,crminf:I2 via crminf:J1_used_as_premise,role not class?,,,,PEP001,draft,"Evidence may be a role, not a type"
-ConfidenceAssessment,class,core,"Assessed belief value",reuse,crminf:I6_Belief_Value,equivalent,,,"no numeric scale required in v0.1",,draft,
+ConfidenceAssessment,class,core,"Assessed belief value",reuse,crminf:J5_holds_to_be (value),property value,,,"no numeric scale required in v0.1",,draft,"No I6 class in CRMinf 1.2.1 RDFS; confidence is the J5 value"
 hasComponent,property,core,object → component,reuse,crm:P46_is_composed_of,,crm:E18,crm:E18,,MS2981 → fragment 4,draft,
 hasMaterialLayer,property,core,object → material layer,reuse,crm:P46_is_composed_of,,HeritageObject,MaterialLayer,,,draft,"DECIDED 2026-09-17: P46; term dropped in favour of P46"
 hasMaterial,property,core,layer → material type,reuse,crm:P45_consists_of,,crm:E18,crm:E57,,,draft,

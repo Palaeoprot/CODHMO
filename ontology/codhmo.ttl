@@ -1,0 +1,235 @@
+# CODHMO — CODICUM Heritage Material Ontology, core module
+# v0.1 draft, 2026-09-17. Source of truth for OWL/JSON-LD derivations.
+# Targets CIDOC CRM 7.1.3, CRMsci 3.2 and CRMinf 1.2.1 (IRIs verified against cidoc-crm.org RDFS, 2026-09-17).
+# See alignment/codhmo-matrix.csv for the term-by-term reuse decisions.
+
+@prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix crminf: <http://www.cidoc-crm.org/extensions/crminf/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix owl:    <http://www.w3.org/2002/07/owl#> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix vann:   <http://purl.org/vocab/vann/> .
+
+<https://codicum.eu/ontology/codhmo>
+    a owl:Ontology ;
+    dcterms:title "CODICUM Heritage Material Ontology (CODHMO) — Core"@en ;
+    dcterms:description "Thin domain layer linking heritage objects, material layers, samples, analyses, evidence and competing hypotheses. Reuses CIDOC CRM, CRMsci, CRMinf and PROV-O; defines only what they lack."@en ;
+    owl:versionInfo "0.1-draft" ;
+    owl:versionIRI <https://codicum.eu/ontology/codhmo/0.1> ;
+    vann:preferredNamespacePrefix "codhmo" ;
+    vann:preferredNamespaceUri "https://codicum.eu/ontology/codhmo#" ;
+    dcterms:created "2026-09-17"^^xsd:date ;
+    rdfs:comment "Namespace is provisional. External ontologies are referenced, not owl:imported, until versions are pinned."@en .
+
+#################################################################
+# Heritage layer
+#################################################################
+
+codhmo:HeritageObject a owl:Class ;
+    rdfs:label "heritage object"@en ;
+    skos:definition "A physical cultural-heritage object to which material analysis refers. Codicological kinds (manuscript, charter, leaf, binding) are expressed with crm:P2_has_type, not subclasses."@en ;
+    rdfs:subClassOf crm:E22_Human-Made_Object ;
+    skos:example "Pepys MS 2981" .
+
+codhmo:Fragment a owl:Class ;
+    rdfs:label "fragment"@en ;
+    skos:definition "A detached part of a former heritage object, now a component of another object. Linked to its current host with crm:P46_is_composed_of."@en ;
+    rdfs:subClassOf codhmo:HeritageObject ;
+    skos:example "Fragment 4, page 5, Pepys MS 2981" .
+
+codhmo:MaterialLayer a owl:Class ;
+    rdfs:label "material layer"@en ;
+    skos:definition "A spatially bounded body of material on or in a heritage object, such as an adhesive, coating, ink, sizing or repair. Attached to its object with crm:P46_is_composed_of; its material kind is given with crm:P45_consists_of."@en ;
+    rdfs:subClassOf crmsci:S10_Material_Substantial ;
+    skos:example "Adhesive layer beneath fragment 4" .
+
+#################################################################
+# Computational analysis layer (PROV-O aligned)
+#################################################################
+
+codhmo:DatabaseGeneration a owl:Class ;
+    rdfs:label "database generation"@en ;
+    skos:definition "A computational activity that generates a search database from source sequences under a recorded configuration."@en ;
+    rdfs:subClassOf prov:Activity ;
+    skos:example "seqdb-gen (Rust) run producing a sequence search database" .
+
+codhmo:DatabaseSearch a owl:Class ;
+    rdfs:label "database search"@en ;
+    skos:definition "A computational activity that matches measured spectra against a search database."@en ;
+    rdfs:subClassOf prov:Activity .
+
+codhmo:SearchDatabase a owl:Class ;
+    rdfs:label "search database"@en ;
+    skos:definition "A generated sequence database used for spectral search."@en ;
+    rdfs:subClassOf prov:Entity .
+
+codhmo:GenerationConfiguration a owl:Class ;
+    rdfs:label "generation configuration"@en ;
+    skos:definition "The configuration used by a database generation. A configured material state (e.g. denatured collagen) is a statement about the computation, never about the sample."@en ;
+    rdfs:subClassOf prov:Entity .
+
+codhmo:PeptideIdentification a owl:Class ;
+    rdfs:label "peptide identification"@en ;
+    skos:definition "A peptide-level result of a database search. It is an observation, not a taxonomic or material identification."@en ;
+    rdfs:subClassOf prov:Entity ;
+    rdfs:comment "Align with PSI-MS / mzIdentML before adding properties."@en .
+
+codhmo:PTMObservation a owl:Class ;
+    rdfs:label "PTM observation"@en ;
+    skos:definition "An observed post-translational or diagenetic modification at a residue position. It carries no chronological interpretation."@en ;
+    rdfs:subClassOf prov:Entity .
+
+#################################################################
+# Interpretation layer (CRMinf aligned)
+#################################################################
+
+codhmo:MaterialHypothesis a owl:Class ;
+    rdfs:label "material hypothesis"@en ;
+    skos:definition "A belief about the identity or composition of a material. Its proposition is given with crminf:J4_that; its confidence with crminf:J5_holds_to_be."@en ;
+    rdfs:subClassOf crminf:I2_Belief .
+
+codhmo:TaxonomicHypothesis a owl:Class ;
+    rdfs:label "taxonomic hypothesis"@en ;
+    skos:definition "A material hypothesis about the biological source of a material, at an explicitly stated taxonomic rank."@en ;
+    rdfs:subClassOf codhmo:MaterialHypothesis .
+
+codhmo:ManufacturingHypothesis a owl:Class ;
+    rdfs:label "manufacturing hypothesis"@en ;
+    skos:definition "A material hypothesis about the process or formulation that produced a material."@en ;
+    rdfs:subClassOf codhmo:MaterialHypothesis .
+
+codhmo:HistoricalInterpretation a owl:Class ;
+    rdfs:label "historical interpretation"@en ;
+    skos:definition "A belief about when, by whom or why a material came to be part of a heritage object. Independent of any material hypothesis."@en ;
+    rdfs:subClassOf crminf:I2_Belief ;
+    owl:disjointWith codhmo:MaterialHypothesis .
+
+#################################################################
+# Object properties defined by CODHMO
+#################################################################
+
+codhmo:hasComponentMaterial a owl:ObjectProperty ;
+    rdfs:label "has component material"@en ;
+    skos:definition "Relates a material body to a constituent material body in a formulation (e.g. glue to its starch component)."@en ;
+    rdfs:domain crmsci:S10_Material_Substantial ;
+    rdfs:range crmsci:S10_Material_Substantial ;
+    skos:scopeNote "Formulation modelling is provisional (handover §17)."@en .
+
+codhmo:hasBiologicalSource a owl:ObjectProperty ;
+    rdfs:label "has biological source"@en ;
+    skos:definition "Relates a material body to an external taxon IRI (NCBI, GBIF, CoL). Asserted only inside the proposition of a hypothesis, never as a direct fact about a sample."@en ;
+    rdfs:domain crmsci:S10_Material_Substantial .
+
+codhmo:hasSourceTissue a owl:ObjectProperty ;
+    rdfs:label "has source tissue"@en ;
+    skos:definition "Relates a material body to an anatomical source, given as an external IRI (e.g. UBERON)."@en ;
+    rdfs:domain crmsci:S10_Material_Substantial .
+
+codhmo:hasMaterialState a owl:ObjectProperty ;
+    rdfs:label "has material state"@en ;
+    skos:definition "Relates a material body to its physical or chemical state, drawn from the codhmo material-state scheme."@en ;
+    rdfs:domain crmsci:S10_Material_Substantial ;
+    rdfs:range skos:Concept .
+
+codhmo:configuredMaterialState a owl:ObjectProperty ;
+    rdfs:label "configured material state"@en ;
+    skos:definition "Relates a generation configuration to the material state it models. Distinct from codhmo:hasMaterialState."@en ;
+    rdfs:domain codhmo:GenerationConfiguration ;
+    rdfs:range skos:Concept .
+
+codhmo:hasPTMObservation a owl:ObjectProperty ;
+    rdfs:label "has PTM observation"@en ;
+    rdfs:domain codhmo:PeptideIdentification ;
+    rdfs:range codhmo:PTMObservation .
+
+codhmo:evidentialRelation a owl:ObjectProperty ;
+    rdfs:label "evidential relation"@en ;
+    skos:definition "Abstract parent of defeasible, non-entailing relations from an observation to a belief. None of its subproperties implies logical proof."@en ;
+    rdfs:range crminf:I2_Belief .
+
+codhmo:supports a owl:ObjectProperty ;
+    rdfs:label "supports"@en ;
+    skos:definition "The observation raises the plausibility of the belief."@en ;
+    rdfs:subPropertyOf codhmo:evidentialRelation .
+
+codhmo:contradicts a owl:ObjectProperty ;
+    rdfs:label "contradicts"@en ;
+    skos:definition "The observation lowers the plausibility of the belief."@en ;
+    rdfs:subPropertyOf codhmo:evidentialRelation .
+
+codhmo:compatibleWith a owl:ObjectProperty ;
+    rdfs:label "compatible with"@en ;
+    skos:definition "The observation is consistent with the belief but does not discriminate it from alternatives."@en ;
+    rdfs:subPropertyOf codhmo:evidentialRelation .
+
+codhmo:hasCompetingHypothesis a owl:ObjectProperty, owl:SymmetricProperty ;
+    rdfs:label "has competing hypothesis"@en ;
+    skos:definition "Relates two beliefs that offer alternative answers to the same question. Neither is deleted when one appears stronger."@en ;
+    rdfs:domain crminf:I2_Belief ;
+    rdfs:range crminf:I2_Belief .
+
+#################################################################
+# SKOS: material-state scheme
+#################################################################
+
+codhmo:MaterialStateScheme a skos:ConceptScheme ;
+    skos:prefLabel "CODHMO material states"@en .
+
+codhmo:Native a skos:Concept ;
+    skos:inScheme codhmo:MaterialStateScheme ; skos:topConceptOf codhmo:MaterialStateScheme ;
+    skos:prefLabel "native"@en .
+
+codhmo:Denatured a skos:Concept ;
+    skos:inScheme codhmo:MaterialStateScheme ; skos:topConceptOf codhmo:MaterialStateScheme ;
+    skos:prefLabel "denatured"@en ;
+    skos:definition "Tertiary/quaternary structure lost, e.g. collagen converted to gelatin/glue by heating."@en .
+
+#################################################################
+# SKOS: material scheme (seed; AAT matches to be added)
+#################################################################
+
+codhmo:MaterialScheme a skos:ConceptScheme ;
+    skos:prefLabel "CODHMO heritage materials"@en ;
+    skos:scopeNote "Each concept is also typed crm:E57_Material. Link to Getty AAT with skos:exactMatch/closeMatch."@en .
+
+codhmo:adhesive a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "adhesive"@en .
+
+codhmo:collagen-adhesive a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:broader codhmo:adhesive ;
+    skos:prefLabel "collagen adhesive"@en ; skos:altLabel "animal glue"@en .
+
+codhmo:rabbit-skin-glue a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:broader codhmo:collagen-adhesive ;
+    skos:prefLabel "rabbit-skin glue"@en .
+
+codhmo:isinglass a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:broader codhmo:collagen-adhesive ;
+    skos:prefLabel "isinglass"@en ; skos:altLabel "fish glue"@en .
+
+codhmo:starch-adhesive a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:broader codhmo:adhesive ;
+    skos:prefLabel "starch adhesive"@en ; skos:altLabel "flour paste"@en .
+
+codhmo:protein-binder a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "protein binder"@en .
+
+codhmo:parchment a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "parchment"@en .
+
+codhmo:paper a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "paper"@en .
+
+codhmo:ink a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "ink"@en .
