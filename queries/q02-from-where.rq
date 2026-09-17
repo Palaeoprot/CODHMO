@@ -1,0 +1,16 @@
+# Q2 From where? Region, and the object chain containing the sampled layer.
+PREFIX codhmo: <https://codicum.eu/ontology/codhmo#>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmsci: <http://www.cidoc-crm.org/extensions/crmsci/>
+PREFIX crminf: <http://www.cidoc-crm.org/extensions/crminf/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+SELECT ?sampleId ?region ?component ?object WHERE {
+  ?s crm:P1_is_identified_by/crm:P190_has_symbolic_content ?sampleId ;
+     crmsci:O5i_was_removed_by ?st .
+  ?st crmsci:O4_sampled_at/rdfs:label ?region ; crmsci:O3_sampled_from ?layer .
+  ?component crm:P46_is_composed_of ?layer .
+  ?object crm:P46_is_composed_of ?component .
+}

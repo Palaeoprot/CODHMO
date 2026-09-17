@@ -1,0 +1,14 @@
+# Q4 Which taxa are compatible with the evidence? (Candidates, not identifications.)
+PREFIX codhmo: <https://codicum.eu/ontology/codhmo#>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmsci: <http://www.cidoc-crm.org/extensions/crmsci/>
+PREFIX crminf: <http://www.cidoc-crm.org/extensions/crminf/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+SELECT DISTINCT ?evidence ?hypothesis ?taxon WHERE {
+  ?evidence codhmo:supports|codhmo:compatibleWith ?hypothesis .
+  ?hypothesis crminf:J4_that ?p .
+  ?p rdf:predicate codhmo:hasBiologicalSource ; rdf:object ?taxon .
+}
