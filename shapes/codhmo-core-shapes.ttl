@@ -1,0 +1,120 @@
+# CODHMO v0.1 — SHACL shapes for the minimal conformance profile (handover §26, §30).
+# sh:Violation = MUST, sh:Warning = SHOULD. Validate with the ontology as ont_graph and RDFS inference
+# so that codhmo subclasses satisfy targets on CRM/CRMsci/CRMinf/PROV classes.
+
+@prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
+@prefix shapes: <https://codicum.eu/ontology/codhmo/shapes#> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix crminf: <http://www.cidoc-crm.org/extensions/crminf/> .
+@prefix prov:   <http://www.w3.org/ns/prov#> .
+@prefix skos:   <http://www.w3.org/2004/02/skos/core#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix sh:     <http://www.w3.org/ns/shacl#> .
+
+# 1. Heritage object ------------------------------------------------------
+shapes:HeritageObjectShape a sh:NodeShape ;
+    sh:targetClass codhmo:HeritageObject ;
+    sh:property [
+        sh:path crm:P1_is_identified_by ; sh:minCount 1 ;
+        sh:message "A heritage object MUST have an identifier (crm:P1)." ] .
+
+# 2. Material layer -------------------------------------------------------
+shapes:MaterialLayerShape a sh:NodeShape ;
+    sh:targetClass codhmo:MaterialLayer ;
+    sh:property [
+        sh:path [ sh:inversePath crm:P46_is_composed_of ] ; sh:minCount 1 ;
+        sh:class crm:E22_Human-Made_Object ;
+        sh:message "A material layer MUST be part of a heritage object (inverse crm:P46)." ] ;
+    sh:property [
+        sh:path crm:P45_consists_of ; sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "A material layer SHOULD state its material (crm:P45)." ] ;
+    sh:property [
+        sh:path crm:P45_consists_of ; sh:class crm:E57_Material ;
+        sh:message "crm:P45 values MUST be crm:E57_Material concepts." ] .
+
+# 3. Sampling event -------------------------------------------------------
+shapes:SampleTakingShape a sh:NodeShape ;
+    sh:targetClass crmsci:S2_Sample_Taking ;
+    sh:property [
+        sh:path crmsci:O5_removed ; sh:minCount 1 ; sh:class crmsci:S13_Sample ;
+        sh:message "A sample taking MUST record the sample it removed (crmsci:O5)." ] ;
+    sh:property [
+        sh:path crmsci:O3_sampled_from ; sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "A sample taking SHOULD record what it sampled from (crmsci:O3)." ] ;
+    sh:property [
+        sh:path crmsci:O4_sampled_at ; sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "A sample taking SHOULD record where it sampled (crmsci:O4)." ] .
+
+# 4. Sample ---------------------------------------------------------------
+shapes:SampleShape a sh:NodeShape ;
+    sh:targetClass crmsci:S13_Sample ;
+    sh:property [
+        sh:path crm:P1_is_identified_by ; sh:minCount 1 ;
+        sh:message "A sample MUST have an identifier (crm:P1)." ] ;
+    sh:property [
+        sh:path crmsci:O5i_was_removed_by ; sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "A sample SHOULD link to its sampling activity (crmsci:O5i)." ] .
+
+# 5–6. Material state: only from the codhmo state scheme -------------------
+shapes:MaterialStateValueShape a sh:NodeShape ;
+    sh:targetObjectsOf codhmo:hasMaterialState, codhmo:configuredMaterialState ;
+    sh:property [
+        sh:path skos:inScheme ; sh:hasValue codhmo:MaterialStateScheme ;
+        sh:message "Material states MUST come from codhmo:MaterialStateScheme." ] .
+
+# Rule 2 (§31): no direct taxon on a sample ------------------------------
+shapes:NoTaxonOnSampleShape a sh:NodeShape ;
+    sh:targetSubjectsOf codhmo:hasBiologicalSource ;
+    sh:not [ sh:class crmsci:S13_Sample ] ;
+    sh:message "codhmo:hasBiologicalSource MUST NOT be asserted directly on a sample; state it inside a hypothesis proposition." .
+
+# 7–8. Analytical activity and observation --------------------------------
+shapes:DatabaseSearchShape a sh:NodeShape ;
+    sh:targetClass codhmo:DatabaseSearch ;
+    sh:property [
+        sh:path prov:used ; sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [ sh:class codhmo:SearchDatabase ] ;
+        sh:message "A database search MUST record the search database it used (prov:used)." ] .
+
+shapes:PeptideIdentificationShape a sh:NodeShape ;
+    sh:targetClass codhmo:PeptideIdentification ;
+    sh:property [
+        sh:path prov:wasGeneratedBy ; sh:minCount 1 ; sh:class codhmo:DatabaseSearch ;
+        sh:message "A peptide identification MUST trace to the database search that generated it." ] .
+
+# 9. Evidence → hypothesis -------------------------------------------------
+shapes:EvidentialTargetShape a sh:NodeShape ;
+    sh:targetObjectsOf codhmo:supports, codhmo:contradicts, codhmo:compatibleWith ;
+    sh:class crminf:I2_Belief ;
+    sh:message "Evidential relations MUST point to a crminf:I2_Belief." .
+
+shapes:BeliefShape a sh:NodeShape ;
+    sh:targetClass codhmo:MaterialHypothesis, codhmo:HistoricalInterpretation ;
+    sh:property [
+        sh:path crminf:J4_that ; sh:minCount 1 ;
+        sh:message "A hypothesis MUST have a proposition (crminf:J4_that)." ] ;
+    sh:property [
+        sh:path [ sh:inversePath [ sh:alternativePath ( codhmo:supports codhmo:contradicts codhmo:compatibleWith ) ] ] ;
+        sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "A hypothesis SHOULD have at least one evidential relation." ] .
+
+# 10. Computational provenance --------------------------------------------
+shapes:DatabaseGenerationShape a sh:NodeShape ;
+    sh:targetClass codhmo:DatabaseGeneration ;
+    sh:property [
+        sh:path prov:wasAssociatedWith ; sh:minCount 1 ; sh:class prov:SoftwareAgent ;
+        sh:message "A database generation MUST name the software that ran it." ] ;
+    sh:property [
+        sh:path prov:used ; sh:qualifiedMinCount 1 ;
+        sh:qualifiedValueShape [ sh:class codhmo:GenerationConfiguration ] ;
+        sh:message "A database generation MUST record its configuration (prov:used)." ] ;
+    sh:property [
+        sh:path [ sh:inversePath prov:wasGeneratedBy ] ; sh:minCount 1 ; sh:class codhmo:SearchDatabase ;
+        sh:message "A database generation MUST produce a search database." ] .
+
+shapes:SoftwareAgentShape a sh:NodeShape ;
+    sh:targetClass prov:SoftwareAgent ;
+    sh:property [
+        sh:path dcterms:hasVersion ; sh:minCount 1 ;
+        sh:message "Software MUST carry a version (dcterms:hasVersion)." ] .

@@ -151,7 +151,7 @@ codhmo:hasPTMObservation a owl:ObjectProperty ;
 codhmo:evidentialRelation a owl:ObjectProperty ;
     rdfs:label "evidential relation"@en ;
     skos:definition "Abstract parent of defeasible, non-entailing relations from an observation to a belief. None of its subproperties implies logical proof."@en ;
-    rdfs:range crminf:I2_Belief .
+    skos:scopeNote "Object must be a crminf:I2_Belief. Enforced by SHACL, not rdfs:range, so a mistyped target is reported rather than silently inferred to be a belief."@en .
 
 codhmo:supports a owl:ObjectProperty ;
     rdfs:label "supports"@en ;
