@@ -1,0 +1,48 @@
+# SYNTHETIC fixture (Step 7, D23): one ZooMS spectrum row traced back to its heritage object.
+# No real object, sample, spectrum or identification is described here. The ZoomzPeak key values are invented
+# and exist only so the round-trip query (q11) and the source-record SHACL rules can be tested before any
+# ZooMS analysis has been run.
+
+@prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix crminf: <http://www.cidoc-crm.org/extensions/crminf/> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix fx:     <https://codicum.eu/data/fixture-zooms/> .
+
+fx:object a codhmo:HeritageObject ; rdfs:label "SYNTHETIC parchment leaf"@en ;
+    crm:P1_is_identified_by fx:object-id ; crm:P46_is_composed_of fx:support .
+fx:object-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "FIXTURE-OBJ-1" .
+fx:support a codhmo:MaterialLayer ; rdfs:label "SYNTHETIC parchment support"@en ;
+    crm:P45_consists_of codhmo:parchment .
+
+fx:tester a crm:E21_Person ; rdfs:label "SYNTHETIC sampler"@en .
+fx:ts a crm:E52_Time-Span ;
+    crm:P82a_begin_of_the_begin "2026-01-01T00:00:00"^^xsd:dateTime ;
+    crm:P82b_end_of_the_end "2026-01-01T23:59:59"^^xsd:dateTime .
+fx:sampling a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from fx:support ; crmsci:O4_sampled_at fx:region ; crmsci:O5_removed fx:S1 ;
+    crm:P14_carried_out_by fx:tester ; crm:P4_has_time-span fx:ts .
+fx:region a crm:E53_Place ; rdfs:label "SYNTHETIC eraser-rub area"@en .
+fx:S1 a crmsci:S13_Sample ; crm:P1_is_identified_by fx:S1-id ; crmsci:O5i_was_removed_by fx:sampling .
+fx:S1-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "FIXTURE-S1" .
+
+# Observation -> source record: the peak list stays in ZoomzPeak; only the row locator is in the graph.
+fx:obs a crmsci:S4_Single_Observation ; rdfs:label "SYNTHETIC ZooMS spectrum of sample FIXTURE-S1"@en ;
+    crmsci:O8_observed fx:S1 ;
+    codhmo:hasSourceRecord fx:rec ;
+    codhmo:supports fx:H1 .
+fx:rec a codhmo:SourceRecord ;
+    codhmo:inStore "ZoomzPeak" ; codhmo:inTable "ZOOMS_SPECTRA" ; codhmo:storeSchemaVersion "0.1.0" ;
+    codhmo:hasKey fx:rec-dataset , fx:rec-file .
+fx:rec-dataset codhmo:keyName "dataset_id" ; codhmo:keyValue "FIXTURE-DATASET" .
+fx:rec-file codhmo:keyName "file_id" ; codhmo:keyValue "FIXTURE-FILE-0001" .
+
+# Hypothesis (taxa only inside propositions, D7/D8). Sheep, so the Bos calf rule (D19) is not in play.
+fx:H1 a codhmo:TaxonomicHypothesis ; rdfs:label "SYNTHETIC: support is sheepskin"@en ;
+    crminf:J4_that fx:P1 .
+fx:P1 a crminf:I4_Proposition_Set ;
+    rdf:subject fx:support ; rdf:predicate codhmo:hasBiologicalSource ;
+    rdf:object <http://purl.obolibrary.org/obo/NCBITaxon_9940> .

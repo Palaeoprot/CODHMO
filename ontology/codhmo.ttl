@@ -282,3 +282,41 @@ codhmo:sensitivity-human-derived a skos:Concept ;
     skos:prefLabel "human-derived material"@en ;
     skos:definition "Material that is, or is hypothesised to be, derived from human remains (skin, bone, hair, tissue). Requires ethical review before sampling, imaging, display or data publication, and respectful description."@en ;
     skos:scopeNote "Triggered only by a biological-source proposition pointing to Homo sapiens (NCBITaxon_9606). Archaic hominins (Neanderthals, Denisovans) and genus-level Homo (9605) do not trigger it. Incidental modern human contamination (keratins, handling) is recorded as a contaminant role, not a biological source, and does not trigger the flag."@en .
+
+#################################################################
+# Source records: links to rows in external data stores (added Step 7)
+#################################################################
+
+codhmo:SourceRecord a owl:Class ;
+    rdfs:label "source record"@en ;
+    skos:definition "A pointer to one row of an external tabular data store (for example a ZoomzPeak spectrum table). Bulk data such as peak lists stays in the store; the graph holds only the locator."@en ;
+    skos:scopeNote "Rows are located by the store's natural key columns until the store provides a stable content-addressed identifier. The store schema version is recorded so a locator can be migrated when key columns change (D23)."@en ;
+    rdfs:subClassOf prov:Entity .
+
+codhmo:hasSourceRecord a owl:ObjectProperty ;
+    rdfs:label "has source record"@en ;
+    skos:definition "Relates an observation (crmsci:S4_Single_Observation) or a peptide identification to the source record holding its underlying data."@en .
+
+codhmo:inStore a owl:DatatypeProperty ;
+    rdfs:label "in store"@en ;
+    skos:definition "Names the data store holding a source record, e.g. \"ZoomzPeak\"."@en .
+
+codhmo:inTable a owl:DatatypeProperty ;
+    rdfs:label "in table"@en ;
+    skos:definition "Names the table of the store holding a source record, e.g. \"ZOOMS_SPECTRA\"."@en .
+
+codhmo:storeSchemaVersion a owl:DatatypeProperty ;
+    rdfs:label "store schema version"@en ;
+    skos:definition "The store's schema version at the time the locator was written."@en .
+
+codhmo:hasKey a owl:ObjectProperty ;
+    rdfs:label "has key"@en ;
+    skos:definition "Relates a source record to one of the key column/value pairs that together locate its row."@en .
+
+codhmo:keyName a owl:DatatypeProperty ;
+    rdfs:label "key name"@en ;
+    skos:definition "The column name of a source-record key."@en .
+
+codhmo:keyValue a owl:DatatypeProperty ;
+    rdfs:label "key value"@en ;
+    skos:definition "The value of a source-record key column, as a string."@en .

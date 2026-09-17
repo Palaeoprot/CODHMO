@@ -1,0 +1,13 @@
+# Q11 Given a row in an external store, which observation, hypothesis, sample and object does it belong to?
+# Bind ?table and the key values to resolve one row; unbound, it lists every traced row.
+PREFIX codhmo: <https://codicum.eu/ontology/codhmo#>
+PREFIX crm: <http://www.cidoc-crm.org/cidoc-crm/>
+PREFIX crmsci: <http://www.cidoc-crm.org/extensions/crmsci/>
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+SELECT ?record ?observation ?hypothesis ?sample ?object WHERE {
+  ?record a codhmo:SourceRecord ; codhmo:inStore ?store ; codhmo:inTable ?table .
+  ?observation codhmo:hasSourceRecord ?record ; crmsci:O8_observed ?sample .
+  OPTIONAL { ?observation codhmo:supports|codhmo:compatibleWith ?hypothesis . }
+  ?sample crmsci:O5i_was_removed_by/crmsci:O3_sampled_from ?layer .
+  ?object crm:P46_is_composed_of+ ?layer .
+}

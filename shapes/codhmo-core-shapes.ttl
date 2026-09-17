@@ -215,3 +215,59 @@ shapes:MaterialPropertySubjectShape a sh:NodeShape ;
     sh:targetSubjectsOf codhmo:hasMaterialState , codhmo:hasSourceTissue ;
     sh:or ( [ sh:class crmsci:S10_Material_Substantial ] [ sh:class crmsci:S13_Sample ] ) ;
     sh:message "codhmo:hasMaterialState / hasSourceTissue MUST be stated on a material body or sample." .
+
+# 11. Source records (Step 7, D23) ------------------------------------------
+shapes:SourceRecordSubjectShape a sh:NodeShape ;
+    sh:targetSubjectsOf codhmo:hasSourceRecord ;
+    sh:or ( [ sh:class crmsci:S4_Single_Observation ] [ sh:class codhmo:PeptideIdentification ] ) ;
+    sh:property [ sh:path codhmo:hasSourceRecord ; sh:class codhmo:SourceRecord ;
+        sh:message "codhmo:hasSourceRecord MUST point to a SourceRecord." ] ;
+    sh:message "codhmo:hasSourceRecord MUST be stated on an observation or a peptide identification." .
+
+shapes:SourceRecordShape a sh:NodeShape ;
+    sh:targetClass codhmo:SourceRecord ;
+    sh:property [ sh:path codhmo:inStore ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:message "A source record MUST name exactly one store (codhmo:inStore)." ] ;
+    sh:property [ sh:path codhmo:inTable ; sh:minCount 1 ; sh:maxCount 1 ;
+        sh:in ( "ZOOMS_SPECTRA" "MS2_SPECTRA" "MS1_ENVELOPE" ) ;
+        sh:message "A source record MUST name exactly one known table (codhmo:inTable)." ] ;
+    sh:property [ sh:path codhmo:storeSchemaVersion ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:message "A source record MUST record the store schema version it was written against." ] ;
+    sh:property [ sh:path codhmo:hasKey ; sh:minCount 1 ;
+        sh:message "A source record MUST carry at least one key (codhmo:hasKey)." ] ;
+    sh:property [ sh:path [ sh:inversePath codhmo:hasSourceRecord ] ; sh:minCount 1 ; sh:severity sh:Warning ;
+        sh:message "A source record SHOULD be referenced by an observation or peptide identification." ] ;
+    sh:sparql [
+        sh:message "A {?table} source record MUST carry key {?missing}." ;
+        sh:select """
+            PREFIX codhmo: <https://codicum.eu/ontology/codhmo#>
+            SELECT $this ?table ?missing WHERE {
+                $this codhmo:inTable ?table .
+                # Required key columns per table (pyshacl forbids VALUES in constraints).
+{ BIND("ZOOMS_SPECTRA" AS ?t) BIND("dataset_id" AS ?missing) }
+                UNION { BIND("ZOOMS_SPECTRA" AS ?t) BIND("file_id" AS ?missing) }
+                UNION { BIND("MS2_SPECTRA" AS ?t) BIND("dataset_id" AS ?missing) }
+                UNION { BIND("MS2_SPECTRA" AS ?t) BIND("raw_filename" AS ?missing) }
+                UNION { BIND("MS2_SPECTRA" AS ?t) BIND("scan_number" AS ?missing) }
+                UNION { BIND("MS1_ENVELOPE" AS ?t) BIND("pxd_accession" AS ?missing) }
+                UNION { BIND("MS1_ENVELOPE" AS ?t) BIND("file_id" AS ?missing) }
+                UNION { BIND("MS1_ENVELOPE" AS ?t) BIND("ms2_title" AS ?missing) }
+                FILTER (?t = ?table)
+                FILTER NOT EXISTS { $this codhmo:hasKey ?k . ?k codhmo:keyName ?missing . }
+            }""" ] ;
+    sh:sparql [
+        sh:message "A source record MUST NOT repeat key {?name}." ;
+        sh:select """
+            PREFIX codhmo: <https://codicum.eu/ontology/codhmo#>
+            SELECT DISTINCT $this ?name WHERE {
+                $this codhmo:hasKey ?k1 , ?k2 .
+                ?k1 codhmo:keyName ?name . ?k2 codhmo:keyName ?name .
+                FILTER (?k1 != ?k2)
+            }""" ] .
+
+shapes:SourceRecordKeyShape a sh:NodeShape ;
+    sh:targetObjectsOf codhmo:hasKey ;
+    sh:property [ sh:path codhmo:keyName ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:message "A source-record key MUST have exactly one string key name." ] ;
+    sh:property [ sh:path codhmo:keyValue ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
+        sh:message "A source-record key MUST have exactly one string key value." ] .

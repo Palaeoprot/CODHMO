@@ -127,7 +127,15 @@ Every CODHMO property's domain and range was removed. Under RDFS inference they 
 - **Only wanted inference kept:** `owl:SymmetricProperty` on `hasCompetingHypothesis`.
 - **Why the proposition-only properties were stripped too:** the domains on `hasBiologicalSource`, `hasComponentMaterial` and `hasComponentRole` never fired, but they looked like constraints.
 
+### D23. Source records link results to rows in external stores
+Bulk data (peak lists, spectra) stays in its store; the graph holds a `codhmo:SourceRecord` that locates one row. An observation (`crmsci:S4_Single_Observation`) or peptide identification points at it with `codhmo:hasSourceRecord`.
+- **Locator:** store name (`inStore`), table (`inTable`: `ZOOMS_SPECTRA`, `MS2_SPECTRA` or `MS1_ENVELOPE`), the store's schema version, and key column/value pairs (`hasKey` → `keyName`, `keyValue`).
+- **Natural keys for now:** ZooMS rows by `dataset_id` + `file_id`; MS2 rows by `dataset_id` + `raw_filename` + `scan_number`; MS1 envelopes by `pxd_accession` + `file_id` + `ms2_title`. SHACL requires each table's keys, exactly once. When ZoomzPeak ships a stable `spectrum_id`, only the key nodes change.
+- **Known weaknesses (accepted 2026-09-17):** keys break if a file is renamed or a dataset re-ingested; the store does not yet guarantee key uniqueness; `ms2_title` format depends on the converter. The recorded schema version is what makes a later migration possible.
+- **Round trip:** `queries/q11` walks record → observation → hypothesis → sample → object. It is tested on a synthetic fixture (`examples/zooms-sourcerecord-fixture.ttl`) because no ZooMS analysis has been run yet.
+
 ## Open items
+- Replace the synthetic source-record fixture with a real ZooMS row once an analysis has been run; switch locators to `spectrum_id` when ZoomzPeak provides it.
 - Palandri et al. 2024 (Zenodo 18772648): MA01-MA20 sample-to-fragment/location mapping requested from the author (2026-09-17); the Missale example holds one representative spine sample until then.
 - IN-A001 has not been sampled yet; its sampler, date and results will be added after processing, then tested with the researcher.
 - Real analytical values to replace the PLACEHOLDERs in the Pepys example.

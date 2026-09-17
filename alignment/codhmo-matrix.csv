@@ -56,3 +56,6 @@ hasConfidenceAssessment,property,core,hypothesis → confidence,reuse,crminf:J5_
 assertedBy,property,core,interpretation → agent,reuse,crm:P14_carried_out_by (on I5) / prov:wasAttributedTo,,,,,,drop,
 assertedAt,property,core,interpretation → time,reuse,crm:P4_has_time-span / prov:generatedAtTime,,,,,,drop,
 usesMethod,property,core,interpretation → method,reuse,crm:P33_used_specific_technique,,,,,,drop,
+SourceRecord,class,provenance,"Locator for one row of an external data store",new+align,prov:Entity,rdfs:subClassOf prov:Entity,,,"must inStore + inTable (closed list) + storeSchemaVersion + table's required keys, each once",ZoomzPeak ZOOMS_SPECTRA row,draft,"Keys switch to spectrum_id when ZoomzPeak provides it (D23)"
+hasSourceRecord,property,provenance,observation → source record,new,,,,,"subject must be crmsci:S4 or PeptideIdentification; object must be SourceRecord",,draft,
+hasKey,property,provenance,source record → key column/value pair,new,,,,,"key must have exactly one keyName and keyValue",dataset_id=…,draft,
