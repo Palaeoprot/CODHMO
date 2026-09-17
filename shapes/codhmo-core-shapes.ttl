@@ -178,7 +178,7 @@ shapes:NoAssertedInterpretationShape a sh:NodeShape ;
 shapes:HumanDerivedSensitivityShape a sh:NodeShape ;
     sh:targetClass crminf:I4_Proposition_Set ;
     sh:sparql [
-        sh:message "A proposition naming a human (Homo) biological source MUST have its subject, and the belief holding it, flagged codhmo:sensitivity-human-derived." ;
+        sh:message "A proposition naming a Homo sapiens (NCBITaxon_9606) biological source MUST have its subject, and the belief holding it, flagged codhmo:sensitivity-human-derived." ;
         sh:prefixes [ sh:declare
             [ sh:prefix "rdf" ; sh:namespace "http://www.w3.org/1999/02/22-rdf-syntax-ns#"^^xsd:anyURI ] ,
             [ sh:prefix "crminf" ; sh:namespace "http://www.cidoc-crm.org/extensions/crminf/"^^xsd:anyURI ] ,
@@ -186,8 +186,7 @@ shapes:HumanDerivedSensitivityShape a sh:NodeShape ;
         sh:select """
             SELECT $this ?value WHERE {
                 $this rdf:predicate codhmo:hasBiologicalSource ; rdf:object ?taxon ; rdf:subject ?material .
-                FILTER (STR(?taxon) IN ("http://purl.obolibrary.org/obo/NCBITaxon_9605",
-                                         "http://purl.obolibrary.org/obo/NCBITaxon_9606"))
+                FILTER (STR(?taxon) = "http://purl.obolibrary.org/obo/NCBITaxon_9606")
                 ?belief crminf:J4_that $this .
                 { BIND (?material AS ?value) } UNION { BIND (?belief AS ?value) }
                 FILTER NOT EXISTS { ?value codhmo:hasSensitivity codhmo:sensitivity-human-derived }

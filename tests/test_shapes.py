@@ -142,3 +142,15 @@ def test_human_derived_flag_missing_fails(node):
               URIRef("https://codicum.eu/ontology/codhmo#hasSensitivity"), None))
     conforms, _ = _validate(g)
     assert not conforms
+
+
+@pytest.mark.parametrize("taxon", ["9605", "63221"])  # genus Homo; H. sapiens neanderthalensis
+def test_archaic_or_genus_homo_does_not_require_flag(taxon):
+    g = Graph().parse(data=PREFIXES + VALID + f"""
+        ex:pep codhmo:compatibleWith ex:hx .
+        ex:hx a codhmo:TaxonomicHypothesis ; crminf:J4_that ex:px .
+        ex:px a crminf:I4_Proposition_Set ; rdf:subject ex:layer ;
+            rdf:predicate codhmo:hasBiologicalSource ;
+            rdf:object <http://purl.obolibrary.org/obo/NCBITaxon_{taxon}> .""", format="turtle")
+    conforms, text = _validate(g)
+    assert conforms, text

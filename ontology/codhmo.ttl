@@ -295,4 +295,4 @@ codhmo:sensitivity-human-derived a skos:Concept ;
     skos:inScheme codhmo:SensitivityScheme ; skos:topConceptOf codhmo:SensitivityScheme ;
     skos:prefLabel "human-derived material"@en ;
     skos:definition "Material that is, or is hypothesised to be, derived from human remains (skin, bone, hair, tissue). Requires ethical review before sampling, imaging, display or data publication, and respectful description."@en ;
-    skos:scopeNote "Triggered by any biological-source proposition pointing to Homo (NCBITaxon_9605) or Homo sapiens (NCBITaxon_9606). Incidental modern human contamination (keratins, handling) is recorded as a contaminant role, not a biological source, and does not trigger the flag."@en .
+    skos:scopeNote "Triggered only by a biological-source proposition pointing to Homo sapiens (NCBITaxon_9606). Archaic hominins (Neanderthals, Denisovans) and genus-level Homo (9605) do not trigger it. Incidental modern human contamination (keratins, handling) is recorded as a contaminant role, not a biological source, and does not trigger the flag."@en .

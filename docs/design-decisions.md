@@ -116,7 +116,7 @@ ZooMS resolves a taxon, not the animal's age. The parchment-only rule `codhmo:ru
 ### D21. Sensitivity flag for human-derived material
 Human-derived material is flagged with `codhmo:hasSensitivity codhmo:sensitivity-human-derived` (SKOS `SensitivityScheme`).
 - **A handling statement, not a scientific claim:** it is asserted directly, unlike taxa. It applies as soon as a human source is even *hypothesised*, because the ethical obligation doesn't wait for certainty.
-- **Enforced:** SHACL requires the flag on both the material and the belief whenever a biological-source proposition points to Homo (9605) or *Homo sapiens* (9606). The Scythian quiver object is also flagged.
+- **Enforced:** SHACL requires the flag on both the material and the belief whenever a biological-source proposition points to *Homo sapiens* (9606). Neanderthals, Denisovans and genus-level *Homo* (9605) deliberately do not trigger it (decided 2026-09-17). The Scythian quiver object is also flagged.
 - **Not triggered by contamination:** incidental modern human proteins (keratins, handling) are recorded as a contaminant role, not a biological source.
 - **Extensible:** the same scheme can later hold other flags, such as sacred objects or restricted collections.
 
