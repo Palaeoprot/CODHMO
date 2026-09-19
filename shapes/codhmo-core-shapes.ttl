@@ -271,3 +271,47 @@ shapes:SourceRecordKeyShape a sh:NodeShape ;
         sh:message "A source-record key MUST have exactly one string key name." ] ;
     sh:property [ sh:path codhmo:keyValue ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
         sh:message "A source-record key MUST have exactly one string key value." ] .
+
+# Taxonomic determinacy -----------------------------------------------------
+shapes:DeterminacySubjectShape a sh:NodeShape ;
+    sh:targetSubjectsOf crminf:J5_holds_to_be ;
+    sh:class crminf:I2_Belief ;
+    sh:message "crminf:J5_holds_to_be MUST be stated on a crminf:I2_Belief." .
+
+shapes:DeterminacyValueShape a sh:NodeShape ;
+    sh:targetObjectsOf crminf:J5_holds_to_be ;
+    sh:property [
+        sh:path skos:inScheme ;
+        sh:hasValue codhmo:DeterminacyScheme ;
+        sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "A J5_holds_to_be value SHOULD come from codhmo:DeterminacyScheme. CRMinf permits other belief values; CODHMO expects its own scheme." ] .
+
+shapes:TaxonomicHypothesisShape a sh:NodeShape ;
+    sh:targetClass codhmo:TaxonomicHypothesis ;
+    sh:property [
+        sh:path crminf:J5_holds_to_be ;
+        sh:maxCount 1 ;
+        sh:message "A codhmo:TaxonomicHypothesis MUST carry at most one crminf:J5_holds_to_be: two determinacies for one attribution is incoherent." ] ;
+    # NOTE: presence of crminf:J5_holds_to_be is deliberately NOT constrained here, at either
+    # severity. The five examples predating codhmo:DeterminacyScheme carry no J5, and the
+    # suite's minimal fixtures assert strict conformance, so even a sh:Warning would make every
+    # bare TaxonomicHypothesis in the repo non-conformant. Determinacy is therefore required by
+    # the Granzotti converter's own contract, not by this profile. Revisit once the pre-scheme
+    # examples have been re-read against their sources and backfilled.
+    sh:property [
+        sh:path crminf:J4_that ;
+        sh:minCount 1 ;
+        sh:message "A codhmo:TaxonomicHypothesis MUST state its proposition with crminf:J4_that." ] .
+
+# codhmo:indistinguishable reports that the method cannot separate its members; the source is
+# not undecided between them. Marking them competing would assert a disagreement the source
+# never expressed, so it is a violation rather than a warning.
+shapes:IndistinguishableNotCompetingShape a sh:NodeShape ;
+    sh:targetSubjectsOf codhmo:hasCompetingHypothesis ;
+    sh:not [
+        sh:property [
+            sh:path crminf:J5_holds_to_be ;
+            sh:hasValue codhmo:indistinguishable ;
+            sh:minCount 1 ] ] ;
+    sh:message "A belief held as codhmo:indistinguishable MUST NOT carry codhmo:hasCompetingHypothesis: its members are an irreducible set, not rival hypotheses." .

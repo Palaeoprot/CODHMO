@@ -158,3 +158,50 @@ def test_archaic_or_genus_homo_does_not_require_flag(taxon):
             rdf:object <http://purl.obolibrary.org/obo/NCBITaxon_{taxon}> .""", format="turtle")
     conforms, text = _validate(g)
     assert conforms, text
+
+
+# --- taxonomic determinacy (codhmo:DeterminacyScheme) ----------------------
+
+_DET_BASE = """
+ex:p a crminf:I4_Proposition_Set .
+ex:a a codhmo:TaxonomicHypothesis ; crminf:J4_that ex:p ; crminf:J5_holds_to_be codhmo:{} .
+ex:b a codhmo:TaxonomicHypothesis ; crminf:J4_that ex:p ; crminf:J5_holds_to_be codhmo:determined .
+ex:a codhmo:hasCompetingHypothesis ex:b .
+ex:obs a crmsci:S4_Single_Observation ; codhmo:supports ex:a, ex:b .
+"""
+
+
+def _det(ttl):
+    return _validate(Graph().parse(data=PREFIXES + ttl, format="turtle"))
+
+
+def test_indistinguishable_must_not_compete():
+    """Members the method cannot separate are an irreducible set, not rival hypotheses."""
+    conforms, _ = _det(_DET_BASE.format("indistinguishable"))
+    assert not conforms
+
+
+def test_alternatives_only_may_compete():
+    """Contrast with the above: unpreferred candidates ARE rivals, so competing is legitimate."""
+    conforms, text = _det(_DET_BASE.format("alternatives-only"))
+    assert conforms, text
+
+
+def test_at_most_one_determinacy():
+    conforms, _ = _det("""
+        ex:p a crminf:I4_Proposition_Set .
+        ex:a a codhmo:TaxonomicHypothesis ; crminf:J4_that ex:p ;
+            crminf:J5_holds_to_be codhmo:determined, codhmo:compatible-only .""")
+    assert not conforms
+
+
+def test_determinacy_only_on_a_belief():
+    conforms, _ = _det(
+        "ex:x a crminf:I4_Proposition_Set ; crminf:J5_holds_to_be codhmo:determined .")
+    assert not conforms
+
+
+def test_taxonomic_hypothesis_requires_proposition():
+    conforms, _ = _det(
+        "ex:a a codhmo:TaxonomicHypothesis ; crminf:J5_holds_to_be codhmo:determined .")
+    assert not conforms

@@ -320,3 +320,36 @@ codhmo:keyName a owl:DatatypeProperty ;
 codhmo:keyValue a owl:DatatypeProperty ;
     rdfs:label "key value"@en ;
     skos:definition "The value of a source-record key column, as a string."@en .
+
+#################################################################
+# SKOS: taxonomic determinacy scheme
+#################################################################
+
+codhmo:DeterminacyScheme a skos:ConceptScheme ;
+    skos:prefLabel "CODHMO taxonomic determinacy"@en ;
+    skos:definition "How firmly the source holds a taxonomic attribution, in the source's own terms."@en ;
+    skos:scopeNote "Carried on the belief node with crminf:J5_holds_to_be. CRMinf's own examples give J5 a truth-like I6_Belief_Value; CODHMO extends it to a domain scheme so that a published source's hedging survives verbatim instead of being flattened to true/false/unknown. Declared here so the extension is explicit rather than discovered."@en ;
+    skos:scopeNote "Determinacy is a property of the attribution, NOT of any one observation. Do not derive it from codhmo:supports / codhmo:compatibleWith: a belief backed by two observations, one discriminating and one not, carries two edges of different strength but a single determinacy."@en .
+
+codhmo:determined a skos:Concept ;
+    skos:inScheme codhmo:DeterminacyScheme ; skos:topConceptOf codhmo:DeterminacyScheme ;
+    skos:prefLabel "determined"@en ;
+    skos:definition "The source states the taxon outright, at the rank it reports."@en .
+
+codhmo:indistinguishable a skos:Concept ;
+    skos:inScheme codhmo:DeterminacyScheme ; skos:topConceptOf codhmo:DeterminacyScheme ;
+    skos:prefLabel "indistinguishable"@en ;
+    skos:definition "The source names two or more taxa that its evidence cannot separate, e.g. the caprine call 'Capra hircus/Ovis aries'."@en ;
+    skos:scopeNote "A positive claim about an irreducible set, not a failure to identify: it carries more weight than an undetermined attribution. The members are NOT competing hypotheses -- the source is not undecided between them, it reports that the method does not discriminate them. Where a shared parent node exists, recording that node at its own rank may express the same claim more directly."@en .
+
+codhmo:alternatives-only a skos:Concept ;
+    skos:inScheme codhmo:DeterminacyScheme ; skos:topConceptOf codhmo:DeterminacyScheme ;
+    skos:prefLabel "alternatives only"@en ;
+    skos:definition "The source offers a set of candidate taxa with none preferred."@en ;
+    skos:scopeNote "Distinct from codhmo:compatible-only: there the source declines to determine but names what it is compatible with, whereas here no preferred taxon exists at all. Do not synthesise one by promoting the first member."@en .
+
+codhmo:compatible-only a skos:Concept ;
+    skos:inScheme codhmo:DeterminacyScheme ; skos:topConceptOf codhmo:DeterminacyScheme ;
+    skos:prefLabel "compatible only"@en ;
+    skos:definition "The source declines to determine the taxon but names one the evidence is compatible with."@en ;
+    skos:scopeNote "The absence of any attribution is modelled by the ABSENCE of a codhmo:TaxonomicHypothesis, never by a concept in this scheme: a belief whose proposition has no object would assert a claim the source refused to make."@en .
