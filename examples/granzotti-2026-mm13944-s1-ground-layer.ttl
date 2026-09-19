@@ -1,0 +1,142 @@
+# Step 4 acceptance case: ONE Granzotti sample mapped end to end, by hand, before any converter.
+# Source: Granzotti et al. 2026, doi:10.1126/sciadv.ady3618 (PXD056094), supplements table S1 and S2.
+# Sample: Medelhavsmuseet, MM 13944, sample S1, ground layer of a painted wooden coffin.
+#
+# Chosen because this one sample exercises four paths at once:
+#   1. a DETERMINED attribution at GENUS rank    -- S1/S2 "Bos sp." -> ncbi:9903
+#   2. ALTERNATIVES-ONLY competing with it       -- S2 "(Bubalus bubalis, Bubalus carabanensis)"
+#   3. an UNDETERMINED protein, which yields NO taxonomic hypothesis at all
+#   4. the S1 <-> S2 join, on Institution + Object Accession No. + Sample No.
+#
+# Modelling notes:
+#   - Rank is held where the source put it: "Bos sp." is genus 9903, never promoted to B. taurus.
+#   - "Bubalus carabanensis" as printed is a valid synonym; NCBI's current name is Bubalus kerabau
+#     (3119969). The taxid is the key, the label follows NCBI. See data/granzotti-2026/.
+#   - Measurements (MQ score, mass, spectrum counts) are deliberately ABSENT: they belong in
+#     ZoomzPeak, not CODHMO. Only the citation crosses over, as codhmo:DocumentLocator.
+#   - The institution string is normalised on join, never in the source TSVs.
+
+@prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
+@prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
+@prefix crmsci: <http://www.cidoc-crm.org/extensions/crmsci/> .
+@prefix crminf: <http://www.cidoc-crm.org/extensions/crminf/> .
+@prefix rdf:    <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs:   <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
+@prefix ncbi:   <http://purl.obolibrary.org/obo/NCBITaxon_> .
+@prefix g:      <https://codicum.eu/data/granzotti-2026/> .
+
+# --- Object, layer, sample -------------------------------------------------
+
+g:MM13944 a codhmo:HeritageObject ;
+    rdfs:label "Painted wooden coffin, MM 13944, Medelhavsmuseet, Stockholm"@en ;
+    crm:P1_is_identified_by g:MM13944-id ;
+    crm:P46_is_composed_of g:MM13944-ground-layer .
+g:MM13944-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "MM 13944" .
+
+g:MM13944-ground-layer a codhmo:MaterialLayer ;
+    rdfs:label "Ground layer"@en ;
+    crm:P45_consists_of codhmo:collagen-adhesive .
+
+g:sampling-MM13944-S1 a crmsci:S2_Sample_Taking ;
+    crmsci:O3_sampled_from g:MM13944-ground-layer ;
+    crmsci:O4_sampled_at g:region-MM13944-S1 ;
+    crmsci:O5_removed g:MM13944-S1 ;
+    crm:P14_carried_out_by g:granzotti-team ;
+    crm:P4_has_time-span g:before-capture .
+g:region-MM13944-S1 a crm:E53_Place ;
+    rdfs:label "Sampling spot for MM 13944 S1 (source figs. S1 to S14)"@en .
+g:granzotti-team a crm:E74_Group ;
+    rdfs:label "Granzotti et al. research team"@en ;
+    dcterms:source <https://doi.org/10.1126/sciadv.ady3618> .
+g:before-capture a crm:E52_Time-Span ;
+    rdfs:comment "Sampling date not reported; bounded by the date the paper was captured."@en ;
+    crm:P82b_end_of_the_end "2026-09-18T00:00:00"^^xsd:dateTime .
+
+g:MM13944-S1 a crmsci:S13_Sample ;
+    crm:P1_is_identified_by g:MM13944-S1-id ;
+    crmsci:O5i_was_removed_by g:sampling-MM13944-S1 .
+g:MM13944-S1-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "MM 13944 / S1" .
+
+# --- Observation 1: COL1a2, the taxonomically informative peptide ----------
+
+g:obs-col1a2 a crmsci:S4_Single_Observation ;
+    rdfs:label "Collagen 1 alpha 2, taxon-specific peptide IGQPGAVGPAGIR"@en ;
+    crmsci:O8_observed g:MM13944-S1 ;
+    codhmo:hasDocumentLocator g:loc-S2-col1a2 , g:loc-prose-bos ;
+    codhmo:supports g:H-bos ;
+    codhmo:compatibleWith g:H-bubalis , g:H-kerabau .
+
+# The per-sample attributions live ONLY in the supplement TSVs, which carry no catalogue edge to
+# the paper, so the claim->evidence chain reaches them through a codhmo:DocumentLocator. This is
+# NOT codhmo:SourceRecord: that locates a row in the measurement store and is bound to its
+# enumerated tables and schema version. Citing published scholarship is a different act.
+g:loc-S2-col1a2 a codhmo:DocumentLocator ;
+    dcterms:source <https://doi.org/10.1126/sciadv.ady3618> ;
+    codhmo:atTable "Granzotti et al. 2026 Table S2 - taxonomic specific peptides.tsv" ;
+    codhmo:hasKey g:k-inst , g:k-obj , g:k-samp , g:k-seq .
+g:k-inst codhmo:keyName "Institution" ; codhmo:keyValue "Medelhavsmuseet" .
+g:k-obj  codhmo:keyName "Object Accession No." ; codhmo:keyValue "MM 13944" .
+g:k-samp codhmo:keyName "Sample No." ; codhmo:keyValue "S1" .
+g:k-seq  codhmo:keyName "Sequence" ; codhmo:keyValue "IGQPGAVGPAGIR" .
+
+# The prose anchor: DOI + section + line, resolvable via library/_derived/ (sectionize).
+g:loc-prose-bos a codhmo:DocumentLocator ;
+    dcterms:source <https://doi.org/10.1126/sciadv.ady3618> ;
+    codhmo:atSection "04_Animal_proteins" ;
+    codhmo:atLine "L26" .
+
+# --- Observation 2: COL1a1, taxonomically UNDETERMINED --------------------
+# The protein identification is recorded; NO codhmo:TaxonomicHypothesis is emitted. A belief whose
+# proposition had no object would assert a taxon the authors explicitly refused to name.
+
+g:obs-col1a1 a crmsci:S4_Single_Observation ;
+    rdfs:label "Collagen 1 alpha 1 (fragment); S1 Taxonomy source = Undetermined"@en ;
+    crmsci:O8_observed g:MM13944-S1 ;
+    codhmo:hasDocumentLocator g:loc-S1-col1a1 .
+
+g:loc-S1-col1a1 a codhmo:DocumentLocator ;
+    dcterms:source <https://doi.org/10.1126/sciadv.ady3618> ;
+    codhmo:atTable "Granzotti et al. 2026 Table S1 - proteins identified.tsv" ;
+    codhmo:hasKey g:k-inst , g:k-obj , g:k-samp , g:k-prot .
+g:k-prot codhmo:keyName "Protein name" ; codhmo:keyValue "Collagen 1 alpha 1 (fragment)" .
+
+# --- The inference event, and what it concluded ---------------------------
+# I5 is the ACTIVITY; what it concludes is an I2_Belief subtype (here TaxonomicHypothesis).
+# Modelling the alternatives as bare I5 conclusions would fail CompetingHypothesisShape.
+
+g:inference-bos a crminf:I5_Inference_Making ;
+    rdfs:label "Taxon assignment from diagnostic COL1a2 peptides"@en ;
+    crminf:J1_used_as_premise g:obs-col1a2 ;
+    crminf:J2_concluded_that g:H-bos .
+
+g:H-bos a codhmo:TaxonomicHypothesis ;
+    rdfs:label "Glue in the ground layer is from the genus Bos"@en ;
+    crminf:J4_that g:p-bos ;
+    crminf:J5_holds_to_be codhmo:determined ;
+    codhmo:hasCompetingHypothesis g:H-bubalis , g:H-kerabau .
+g:p-bos a crminf:I4_Proposition_Set ;
+    rdf:subject g:MM13944-ground-layer ;
+    rdf:predicate codhmo:hasBiologicalSource ;
+    rdf:object ncbi:9903 .
+
+# Parenthesised in table S2: the authors' own hedge. Retained, not dropped as prose.
+g:H-bubalis a codhmo:TaxonomicHypothesis ;
+    rdfs:label "Alternative: Bubalus bubalis (water buffalo)"@en ;
+    crminf:J4_that g:p-bubalis ;
+    crminf:J5_holds_to_be codhmo:alternatives-only .
+g:p-bubalis a crminf:I4_Proposition_Set ;
+    rdf:subject g:MM13944-ground-layer ;
+    rdf:predicate codhmo:hasBiologicalSource ;
+    rdf:object ncbi:89462 .
+
+g:H-kerabau a codhmo:TaxonomicHypothesis ;
+    rdfs:label "Alternative: Bubalus kerabau, printed in the source as Bubalus carabanensis"@en ;
+    crminf:J4_that g:p-kerabau ;
+    crminf:J5_holds_to_be codhmo:alternatives-only ;
+    codhmo:hasCompetingHypothesis g:H-bubalis .
+g:p-kerabau a crminf:I4_Proposition_Set ;
+    rdf:subject g:MM13944-ground-layer ;
+    rdf:predicate codhmo:hasBiologicalSource ;
+    rdf:object ncbi:3119969 .

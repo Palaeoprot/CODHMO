@@ -353,3 +353,30 @@ codhmo:compatible-only a skos:Concept ;
     skos:prefLabel "compatible only"@en ;
     skos:definition "The source declines to determine the taxon but names one the evidence is compatible with."@en ;
     skos:scopeNote "The absence of any attribution is modelled by the ABSENCE of a codhmo:TaxonomicHypothesis, never by a concept in this scheme: a belief whose proposition has no object would assert a claim the source refused to make."@en .
+
+
+#################################################################
+# Document locators (citable positions in published sources)
+#################################################################
+
+codhmo:DocumentLocator a owl:Class ;
+    rdfs:label "document locator"@en ;
+    skos:definition "A citable position in a published document: the DOI, plus either a prose anchor (section and line) or a table reference with the key columns identifying one row."@en ;
+    skos:scopeNote "Distinct from codhmo:SourceRecord, which locates a row in a MEASUREMENT store (ZoomzPeak) and is bound to that store's enumerated tables and schema version. A DocumentLocator cites published scholarship instead, so the two must not be conflated: widening SourceRecord to admit a paper's supplement would mix a bibliographic citation with instrument data."@en ;
+    skos:scopeNote "A bare DOI is not a locator. Cite the position that carries the claim, so a reader can check it without re-reading the paper."@en .
+
+codhmo:hasDocumentLocator a owl:ObjectProperty ;
+    rdfs:label "has document locator"@en ;
+    skos:definition "Relates an observation, a belief or a proposition to the position in a published document that states it."@en .
+
+codhmo:atSection a owl:DatatypeProperty ;
+    rdfs:label "at section"@en ;
+    skos:definition "The section of the cited document, as the section identifier of the derived text (e.g. \"04_Animal_proteins\")."@en .
+
+codhmo:atLine a owl:DatatypeProperty ;
+    rdfs:label "at line"@en ;
+    skos:definition "The line anchor within the cited section (e.g. \"L26\")."@en .
+
+codhmo:atTable a owl:DatatypeProperty ;
+    rdfs:label "at table"@en ;
+    skos:definition "The supplementary table of the cited document, named as published or as filed. Identify the row itself with codhmo:hasKey."@en .

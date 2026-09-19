@@ -118,7 +118,8 @@ def test_taxon_must_be_numeric_ncbi_iri(bad):
 
 @pytest.mark.parametrize("name", ["kasso-2025-pakepu-white-paste", "sargent-2025-aein656-gold-leaf-adhesive",
                                   "charter-illustrative", "fiddyment-2021-birth-girdle",
-                                  "palandri-2024-missale-nidrosiense", "brandt-2023-scythian-leather"])
+                                  "palandri-2024-missale-nidrosiense", "brandt-2023-scythian-leather",
+                                  "granzotti-2026-mm13944-s1-ground-layer"])
 def test_step6_examples_have_no_violations(name):
     ont = Graph().parse(ROOT / "ontology" / "codhmo.ttl")
     shapes = Graph().parse(ROOT / "shapes" / "codhmo-core-shapes.ttl")
@@ -204,4 +205,43 @@ def test_determinacy_only_on_a_belief():
 def test_taxonomic_hypothesis_requires_proposition():
     conforms, _ = _det(
         "ex:a a codhmo:TaxonomicHypothesis ; crminf:J5_holds_to_be codhmo:determined .")
+    assert not conforms
+
+
+# --- document locators (codhmo:DocumentLocator) ----------------------------
+
+_DOI = "<https://doi.org/10.1126/sciadv.ady3618>"
+
+
+def test_prose_locator_conforms():
+    conforms, text = _det(f"""
+        ex:loc a codhmo:DocumentLocator ; dcterms:source {_DOI} ;
+            codhmo:atSection "04_Animal_proteins" ; codhmo:atLine "L26" .""")
+    assert conforms, text
+
+
+def test_table_locator_conforms():
+    conforms, text = _det(f"""
+        ex:loc a codhmo:DocumentLocator ; dcterms:source {_DOI} ;
+            codhmo:atTable "Table S2.tsv" ;
+            codhmo:hasKey ex:k . ex:k codhmo:keyName "Sample No." ; codhmo:keyValue "S1" .""")
+    assert conforms, text
+
+
+def test_bare_doi_is_not_a_locator():
+    """A DOI alone does not say where in the paper the claim is."""
+    conforms, _ = _det(f"ex:loc a codhmo:DocumentLocator ; dcterms:source {_DOI} .")
+    assert not conforms
+
+
+def test_line_without_section_rejected():
+    """Line anchors are section-relative, so a bare line number is unresolvable."""
+    conforms, _ = _det(f"""
+        ex:loc a codhmo:DocumentLocator ; dcterms:source {_DOI} ;
+            codhmo:atTable "Table S2.tsv" ; codhmo:atLine "L26" .""")
+    assert not conforms
+
+
+def test_locator_must_be_a_document_locator():
+    conforms, _ = _det("ex:obs codhmo:hasDocumentLocator ex:notALocator .")
     assert not conforms

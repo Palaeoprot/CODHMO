@@ -315,3 +315,30 @@ shapes:IndistinguishableNotCompetingShape a sh:NodeShape ;
             sh:hasValue codhmo:indistinguishable ;
             sh:minCount 1 ] ] ;
     sh:message "A belief held as codhmo:indistinguishable MUST NOT carry codhmo:hasCompetingHypothesis: its members are an irreducible set, not rival hypotheses." .
+
+# Document locators ---------------------------------------------------------
+shapes:DocumentLocatorTargetShape a sh:NodeShape ;
+    sh:targetObjectsOf codhmo:hasDocumentLocator ;
+    sh:class codhmo:DocumentLocator ;
+    sh:message "codhmo:hasDocumentLocator MUST point to a codhmo:DocumentLocator." .
+
+shapes:DocumentLocatorShape a sh:NodeShape ;
+    sh:targetClass codhmo:DocumentLocator ;
+    sh:property [
+        sh:path dcterms:source ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A document locator MUST cite exactly one document, as an IRI (the DOI) on dcterms:source." ] ;
+    sh:property [ sh:path codhmo:atSection ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path codhmo:atLine ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path codhmo:atTable ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    # A bare DOI locates nothing: require a prose anchor or a table reference.
+    sh:or (
+        [ sh:property [ sh:path codhmo:atSection ; sh:minCount 1 ] ]
+        [ sh:property [ sh:path codhmo:atTable ; sh:minCount 1 ] ] ) ;
+    sh:message "A document locator MUST narrow the document: give codhmo:atSection (prose) or codhmo:atTable (a supplement). A DOI alone is not a locator." .
+
+# A line anchor without its section is unresolvable: line numbers are section-relative.
+shapes:DocumentLocatorLineShape a sh:NodeShape ;
+    sh:targetSubjectsOf codhmo:atLine ;
+    sh:property [
+        sh:path codhmo:atSection ; sh:minCount 1 ;
+        sh:message "codhmo:atLine requires codhmo:atSection: line anchors are relative to a section, not to the whole document." ] .
