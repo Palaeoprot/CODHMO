@@ -20,7 +20,7 @@ X, Y, Z (no parentheses)	determined	yes, if >1 member	source states the taxon ou
 X, (Y, Z)	determined (X) + alternatives-only (Y, Z)	yes	X is preferred; Y and Z are the authors' hedge
 X (Y, Z)	determined (X) + alternatives-only (Y, Z)	yes	same as above; no comma before the paren
 (Y, Z)	alternatives-only	yes, among members	NO preferred taxon exists; do not synthesise one
-A/B	indistinguishable	no	evidence cannot separate A and B; a positive claim, ranks ABOVE undetermined in weight
+A/B	determined (at the shared parent)	no	resolve A and B to their lowest common clade and record THAT taxon, e.g. Capra hircus/Ovis aries -> Caprinae 9963. Do not emit two competing hypotheses. codhmo:indistinguishable remains defined for pairs with no usable shared parent.
 Undetermined, compatible X	compatible-only	no	S1 only; distinct from alternatives-only
 Undetermine, compatible X	compatible-only	no	S1 typo (4 rows), missing final d
 Undetermined	(none)	n/a	emit the protein identification and NO TaxonomicHypothesis; a belief with no object would assert a claim the authors refused to make

@@ -8,7 +8,7 @@
 # Normalise on join. NEVER edit the source TSVs: they are transcriptions of a published supplement.
 # Verified against NCBI Taxonomy 2026-09-19. Re-check with tools/check_ncbi_taxa.py.
 #
-# defect: ok | typo | synonym | infra-rank | hybrid | indistinguishable
+# defect: ok | typo | synonym | infra-rank | hybrid | shared-parent
 source_string	taxid	current_label	rank	defect	note
 Aegilops tauschii subsp. strangulata	200361	Aegilops tauschii subsp. strangulata	subspecies	ok	
 Agilops tauschii subsp. strangulata	200361	Aegilops tauschii subsp. strangulata	subspecies	typo	Aegilops misspelled
@@ -29,7 +29,7 @@ Bubalus carabanensis	3119969	Bubalus kerabau	species	synonym	VALID source spelli
 Capra hibex	72542	Capra ibex	species	typo	ibex misspelled
 Capra ibex	72542	Capra ibex	species	ok	
 Capra hircus	9925	Capra hircus	species	ok	
-Capra hircus/Ovis aries	9925;9940	Capra hircus / Ovis aries	species	indistinguishable	slash = two taxa the evidence cannot separate; NOT undetermined
+Capra hircus/Ovis aries	9963	Caprinae	subfamily	shared-parent	the caprine call: evidence cannot separate sheep from goat, so recorded at their shared subfamily rank (9963). Printed members Capra hircus (9925) and Ovis aries (9940) are kept as a label note, NOT as two competing hypotheses. Determinacy is 'determined' at subfamily, not 'indistinguishable': naming the clade the evidence does reach is a positive claim.
 Caprinae	9963	Caprinae	subfamily	ok	
 Cephalophinae	9952	Cephalophinae	subfamily	ok	
 Connochaetes taurinus	9927	Connochaetes taurinus	species	ok	
