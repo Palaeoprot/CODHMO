@@ -63,7 +63,7 @@ python -m pytest -q tests
 
 ## Licence
 
-CODHMO is licensed under the [GNU General Public License v3.0](LICENSE).
+CODHMO is licensed under the [**European Union Public Licence**](https://commission.europa.eu/about/departments-and-executive-agencies/digital-services/open-source-strategy-history/european-union-public-licence_en)
 
 ## Funding
 
