@@ -21,7 +21,7 @@
     skos:scopeNote "CODHMO properties carry no rdfs:domain/rdfs:range: under RDFS inference those silently retype misused subjects/objects. Intended subjects/objects are stated in definitions and enforced by SHACL (D10, D22)."@en ;
     dcterms:title "CODICUM Heritage Material Ontology (CODHMO) — Core"@en ;
     dcterms:description "Thin domain layer linking heritage objects, material layers, samples, analyses, evidence and competing hypotheses. Reuses CIDOC CRM, CRMsci, CRMinf and PROV-O; defines only what they lack."@en ;
-    owl:versionInfo "0.1-draft" ;
+    owl:versionInfo "0.2-draft" ;
     owl:versionIRI <https://codicum.eu/ontology/codhmo/0.1> ;
     vann:preferredNamespacePrefix "codhmo" ;
     vann:preferredNamespaceUri "https://codicum.eu/ontology/codhmo#" ;
@@ -216,6 +216,27 @@ codhmo:parchment a skos:Concept, crm:E57_Material ;
     skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
     skos:prefLabel "parchment"@en .
 
+# D30: skeletal and extract materials (ZooMS of bone, tooth, antler, ivory; re-used extracts).
+codhmo:bone a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "bone"@en .
+codhmo:dentine a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "dentine"@en .
+codhmo:ivory a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:broader codhmo:dentine ;
+    skos:prefLabel "ivory"@en .
+codhmo:antler a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "antler"@en .
+codhmo:collagen-extract a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "collagen extract"@en ;
+    skos:scopeNote "A laboratory extract that is itself sampled, e.g. gelatin prepared for radiocarbon dating. The sample it came from is linked with crmsci:O3_sampled_from (D30)."@en .
+codhmo:gelatin a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:broader codhmo:collagen-extract ;
+    skos:prefLabel "gelatin"@en ; skos:altLabel "ultrafiltered gelatin"@en .
+
 codhmo:paper a skos:Concept, crm:E57_Material ;
     skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
     skos:prefLabel "paper"@en .
@@ -317,6 +338,95 @@ codhmo:keyName a owl:DatatypeProperty ;
     rdfs:label "key name"@en ;
     skos:definition "The column name of a source-record key."@en .
 
+codhmo:nearestNcbiTaxon a owl:ObjectProperty ;
+    rdfs:label "nearest NCBI taxon"@en ;
+    skos:definition "On a biological-source proposition whose object is not an NCBI taxon (D29): the closest NCBI ancestor, as a numeric NCBITaxon IRI. Stated only when NCBI lacks the taxon itself."@en .
+
 codhmo:keyValue a owl:DatatypeProperty ;
     rdfs:label "key value"@en ;
     skos:definition "The value of a source-record key column, as a string."@en .
+
+#################################################################
+# SKOS: taxonomic determinacy scheme
+#################################################################
+
+codhmo:DeterminacyScheme a skos:ConceptScheme ;
+    skos:prefLabel "CODHMO taxonomic determinacy"@en ;
+    skos:definition "How firmly the source holds a taxonomic attribution, in the source's own terms."@en ;
+    skos:scopeNote "Carried on the belief node with crminf:J5_holds_to_be. CRMinf's own examples give J5 a truth-like I6_Belief_Value; CODHMO extends it to a domain scheme so that a published source's hedging survives verbatim instead of being flattened to true/false/unknown. Declared here so the extension is explicit rather than discovered."@en ;
+    skos:scopeNote "Determinacy is a property of the attribution, NOT of any one observation. Do not derive it from codhmo:supports / codhmo:compatibleWith: a belief backed by two observations, one discriminating and one not, carries two edges of different strength but a single determinacy."@en .
+
+codhmo:determined a skos:Concept ;
+    skos:inScheme codhmo:DeterminacyScheme ; skos:topConceptOf codhmo:DeterminacyScheme ;
+    skos:prefLabel "determined"@en ;
+    skos:definition "The source states the taxon outright, at the rank it reports."@en .
+
+codhmo:indistinguishable a skos:Concept ;
+    skos:inScheme codhmo:DeterminacyScheme ; skos:topConceptOf codhmo:DeterminacyScheme ;
+    skos:prefLabel "indistinguishable"@en ;
+    skos:definition "The source names two or more taxa that its evidence cannot separate, e.g. the caprine call 'Capra hircus/Ovis aries'."@en ;
+    skos:scopeNote "A positive claim about an irreducible set, not a failure to identify: it carries more weight than an undetermined attribution. The members are NOT competing hypotheses -- the source is not undecided between them, it reports that the method does not discriminate them. Where a shared parent node exists, recording that node at its own rank may express the same claim more directly."@en .
+
+codhmo:alternatives-only a skos:Concept ;
+    skos:inScheme codhmo:DeterminacyScheme ; skos:topConceptOf codhmo:DeterminacyScheme ;
+    skos:prefLabel "alternatives only"@en ;
+    skos:definition "The source offers a set of candidate taxa with none preferred."@en ;
+    skos:scopeNote "Distinct from codhmo:compatible-only: there the source declines to determine but names what it is compatible with, whereas here no preferred taxon exists at all. Do not synthesise one by promoting the first member."@en .
+
+codhmo:compatible-only a skos:Concept ;
+    skos:inScheme codhmo:DeterminacyScheme ; skos:topConceptOf codhmo:DeterminacyScheme ;
+    skos:prefLabel "compatible only"@en ;
+    skos:definition "The source declines to determine the taxon but names one the evidence is compatible with."@en ;
+    skos:scopeNote "The absence of any attribution is modelled by the ABSENCE of a codhmo:TaxonomicHypothesis, never by a concept in this scheme: a belief whose proposition has no object would assert a claim the source refused to make."@en .
+
+codhmo:tentative a skos:Concept ;
+    skos:inScheme codhmo:DeterminacyScheme ; skos:topConceptOf codhmo:DeterminacyScheme ;
+    skos:prefLabel "tentative"@en ;
+    skos:definition "The source names the taxon but marks it as doubtful (e.g. 'Calf?')."@en ;
+    skos:scopeNote "D27. A tentative belief is never a premise for a domain rule such as D19 (bovine parchment = calf), which requires codhmo:determined."@en .
+
+#################################################################
+# Identification methods (D26): stated on crminf:I5_Inference_Making via crm:P33_used_specific_technique
+#################################################################
+
+codhmo:IdentificationMethodScheme a skos:ConceptScheme ;
+    skos:prefLabel "CODHMO identification method"@en .
+codhmo:method-manual-markers a skos:Concept, crm:E29_Design_or_Procedure ;
+    skos:inScheme codhmo:IdentificationMethodScheme ; skos:topConceptOf codhmo:IdentificationMethodScheme ;
+    skos:prefLabel "manual marker reading"@en ;
+    skos:definition "A person reads diagnostic ZooMS peptide markers from the spectrum."@en .
+codhmo:method-automated-markers a skos:Concept, crm:E29_Design_or_Procedure ;
+    skos:inScheme codhmo:IdentificationMethodScheme ; skos:topConceptOf codhmo:IdentificationMethodScheme ;
+    skos:prefLabel "automated marker matching"@en ;
+    skos:definition "Software matches ZooMS peptide markers (e.g. SpecieScan, PAMPA). Name the software with prov:wasAssociatedWith where known."@en .
+codhmo:method-database-search a skos:Concept, crm:E29_Design_or_Procedure ;
+    skos:inScheme codhmo:IdentificationMethodScheme ; skos:topConceptOf codhmo:IdentificationMethodScheme ;
+    skos:prefLabel "sequence database search"@en ;
+    skos:definition "LC-MS/MS spectra searched against a sequence database; taxa follow from matched peptides."@en .
+
+
+#################################################################
+# Document locators (citable positions in published sources)
+#################################################################
+
+codhmo:DocumentLocator a owl:Class ;
+    rdfs:label "document locator"@en ;
+    skos:definition "A citable position in a published document: the DOI, plus either a prose anchor (section and line) or a table reference with the key columns identifying one row."@en ;
+    skos:scopeNote "Distinct from codhmo:SourceRecord, which locates a row in a MEASUREMENT store (ZoomzPeak) and is bound to that store's enumerated tables and schema version. A DocumentLocator cites published scholarship instead, so the two must not be conflated: widening SourceRecord to admit a paper's supplement would mix a bibliographic citation with instrument data."@en ;
+    skos:scopeNote "A bare DOI is not a locator. Cite the position that carries the claim, so a reader can check it without re-reading the paper."@en .
+
+codhmo:hasDocumentLocator a owl:ObjectProperty ;
+    rdfs:label "has document locator"@en ;
+    skos:definition "Relates an observation, a belief or a proposition to the position in a published document that states it."@en .
+
+codhmo:atSection a owl:DatatypeProperty ;
+    rdfs:label "at section"@en ;
+    skos:definition "The section of the cited document, as the section identifier of the derived text (e.g. \"04_Animal_proteins\")."@en .
+
+codhmo:atLine a owl:DatatypeProperty ;
+    rdfs:label "at line"@en ;
+    skos:definition "The line anchor within the cited section (e.g. \"L26\")."@en .
+
+codhmo:atTable a owl:DatatypeProperty ;
+    rdfs:label "at table"@en ;
+    skos:definition "The supplementary table of the cited document, named as published or as filed. Identify the row itself with codhmo:hasKey."@en .

@@ -1,0 +1,5 @@
+# Source species -> taxon IRI (D29). NCBI when it has the taxon; else GBIF backbone + nearest NCBI ancestor. Checked 2026-09-26.
+species	authority	taxon_id	rank	nearest_ncbi	note
+Zygomaturus trilobus	gbif	4825997	species	38609	not in NCBI at species/genus/family; nearest NCBI = Diprotodontia (order)
+Palorchestes azael	gbif	4826119	species	38609	not in NCBI at species/genus/family; nearest NCBI = Diprotodontia (order)
+Protemnodon mamkurra	ncbi	2493641	genus		species (described 2024) in neither NCBI nor GBIF; NCBI genus used

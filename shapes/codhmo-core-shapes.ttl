@@ -150,6 +150,43 @@ shapes:NCBITaxonIdShape a sh:NodeShape ;
             SELECT $this ?value WHERE {
                 $this rdf:predicate codhmo:hasBiologicalSource ; rdf:object ?value .
                 FILTER (!isIRI(?value) || !REGEX(STR(?value), "^http://purl[.]obolibrary[.]org/obo/NCBITaxon_[0-9]+$"))
+                # D29: a second-authority IRI is allowed only with a numeric NCBI ancestor.
+                FILTER NOT EXISTS {
+                    FILTER (isIRI(?value) && REGEX(STR(?value), "^(https://www[.]gbif[.]org/species/[0-9]+|https://www[.]catalogueoflife[.]org/data/taxon/[A-Za-z0-9]+|https://paleobiodb[.]org/classic/basicTaxonInfo[?]taxon_no=[0-9]+)$"))
+                    $this codhmo:nearestNcbiTaxon ?n .
+                    FILTER (isIRI(?n) && REGEX(STR(?n), "^http://purl[.]obolibrary[.]org/obo/NCBITaxon_[0-9]+$"))
+                }
+            }""" ] .
+
+# D26: an inference concluding a taxonomic belief SHOULD state its method -------
+shapes:InferenceMethodShape a sh:NodeShape ;
+    sh:targetClass crminf:I5_Inference_Making ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "An inference concluding a taxonomic hypothesis SHOULD state its method (crm:P33_used_specific_technique, from codhmo:IdentificationMethodScheme)." ;
+        sh:prefixes [ sh:declare
+            [ sh:prefix "crm" ; sh:namespace "http://www.cidoc-crm.org/cidoc-crm/"^^xsd:anyURI ] ,
+            [ sh:prefix "crminf" ; sh:namespace "http://www.cidoc-crm.org/extensions/crminf/"^^xsd:anyURI ] ,
+            [ sh:prefix "codhmo" ; sh:namespace "https://codicum.eu/ontology/codhmo#"^^xsd:anyURI ] ] ;
+        sh:select """
+            SELECT $this WHERE {
+                $this crminf:J2_concluded_that ?h . ?h a codhmo:TaxonomicHypothesis .
+                FILTER NOT EXISTS { $this crm:P33_used_specific_technique ?m }
+            }""" ] .
+
+# D27: a domain rule (D19) takes only determined beliefs as premises -------------
+shapes:RulePremiseDeterminedShape a sh:NodeShape ;
+    sh:targetClass crminf:I5_Inference_Making ;
+    sh:sparql [
+        sh:message "An inference applying a domain rule MUST NOT take a tentative (or otherwise non-determined) belief as premise." ;
+        sh:prefixes [ sh:declare
+            [ sh:prefix "crminf" ; sh:namespace "http://www.cidoc-crm.org/extensions/crminf/"^^xsd:anyURI ] ,
+            [ sh:prefix "codhmo" ; sh:namespace "https://codicum.eu/ontology/codhmo#"^^xsd:anyURI ] ] ;
+        sh:select """
+            SELECT $this ?premise WHERE {
+                $this crminf:J3_applied ?rule ; crminf:J1_used_as_premise ?premise .
+                ?premise crminf:J5_holds_to_be ?d .
+                FILTER (?d != codhmo:determined)
             }""" ] .
 
 shapes:ComponentRoleValueShape a sh:NodeShape ;
@@ -245,7 +282,7 @@ shapes:SourceRecordShape a sh:NodeShape ;
                 $this codhmo:inTable ?table .
                 # Required key columns per table (pyshacl forbids VALUES in constraints).
 { BIND("ZOOMS_SPECTRA" AS ?t) BIND("dataset_id" AS ?missing) }
-                UNION { BIND("ZOOMS_SPECTRA" AS ?t) BIND("file_id" AS ?missing) }
+                UNION { BIND("ZOOMS_SPECTRA" AS ?t) BIND("run" AS ?missing) }
                 UNION { BIND("MS2_SPECTRA" AS ?t) BIND("dataset_id" AS ?missing) }
                 UNION { BIND("MS2_SPECTRA" AS ?t) BIND("raw_filename" AS ?missing) }
                 UNION { BIND("MS2_SPECTRA" AS ?t) BIND("scan_number" AS ?missing) }
@@ -271,3 +308,74 @@ shapes:SourceRecordKeyShape a sh:NodeShape ;
         sh:message "A source-record key MUST have exactly one string key name." ] ;
     sh:property [ sh:path codhmo:keyValue ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ;
         sh:message "A source-record key MUST have exactly one string key value." ] .
+
+# Taxonomic determinacy -----------------------------------------------------
+shapes:DeterminacySubjectShape a sh:NodeShape ;
+    sh:targetSubjectsOf crminf:J5_holds_to_be ;
+    sh:class crminf:I2_Belief ;
+    sh:message "crminf:J5_holds_to_be MUST be stated on a crminf:I2_Belief." .
+
+shapes:DeterminacyValueShape a sh:NodeShape ;
+    sh:targetObjectsOf crminf:J5_holds_to_be ;
+    sh:property [
+        sh:path skos:inScheme ;
+        sh:hasValue codhmo:DeterminacyScheme ;
+        sh:minCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "A J5_holds_to_be value SHOULD come from codhmo:DeterminacyScheme. CRMinf permits other belief values; CODHMO expects its own scheme." ] .
+
+shapes:TaxonomicHypothesisShape a sh:NodeShape ;
+    sh:targetClass codhmo:TaxonomicHypothesis ;
+    sh:property [
+        sh:path crminf:J5_holds_to_be ;
+        sh:maxCount 1 ;
+        sh:message "A codhmo:TaxonomicHypothesis MUST carry at most one crminf:J5_holds_to_be: two determinacies for one attribution is incoherent." ] ;
+    # NOTE: presence of crminf:J5_holds_to_be is deliberately NOT constrained here, at either
+    # severity. The five examples predating codhmo:DeterminacyScheme carry no J5, and the
+    # suite's minimal fixtures assert strict conformance, so even a sh:Warning would make every
+    # bare TaxonomicHypothesis in the repo non-conformant. Determinacy is therefore required by
+    # the Granzotti converter's own contract, not by this profile. Revisit once the pre-scheme
+    # examples have been re-read against their sources and backfilled.
+    sh:property [
+        sh:path crminf:J4_that ;
+        sh:minCount 1 ;
+        sh:message "A codhmo:TaxonomicHypothesis MUST state its proposition with crminf:J4_that." ] .
+
+# codhmo:indistinguishable reports that the method cannot separate its members; the source is
+# not undecided between them. Marking them competing would assert a disagreement the source
+# never expressed, so it is a violation rather than a warning.
+shapes:IndistinguishableNotCompetingShape a sh:NodeShape ;
+    sh:targetSubjectsOf codhmo:hasCompetingHypothesis ;
+    sh:not [
+        sh:property [
+            sh:path crminf:J5_holds_to_be ;
+            sh:hasValue codhmo:indistinguishable ;
+            sh:minCount 1 ] ] ;
+    sh:message "A belief held as codhmo:indistinguishable MUST NOT carry codhmo:hasCompetingHypothesis: its members are an irreducible set, not rival hypotheses." .
+
+# Document locators ---------------------------------------------------------
+shapes:DocumentLocatorTargetShape a sh:NodeShape ;
+    sh:targetObjectsOf codhmo:hasDocumentLocator ;
+    sh:class codhmo:DocumentLocator ;
+    sh:message "codhmo:hasDocumentLocator MUST point to a codhmo:DocumentLocator." .
+
+shapes:DocumentLocatorShape a sh:NodeShape ;
+    sh:targetClass codhmo:DocumentLocator ;
+    sh:property [
+        sh:path dcterms:source ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ;
+        sh:message "A document locator MUST cite exactly one document, as an IRI (the DOI) on dcterms:source." ] ;
+    sh:property [ sh:path codhmo:atSection ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path codhmo:atLine ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    sh:property [ sh:path codhmo:atTable ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+    # A bare DOI locates nothing: require a prose anchor or a table reference.
+    sh:or (
+        [ sh:property [ sh:path codhmo:atSection ; sh:minCount 1 ] ]
+        [ sh:property [ sh:path codhmo:atTable ; sh:minCount 1 ] ] ) ;
+    sh:message "A document locator MUST narrow the document: give codhmo:atSection (prose) or codhmo:atTable (a supplement). A DOI alone is not a locator." .
+
+# A line anchor without its section is unresolvable: line numbers are section-relative.
+shapes:DocumentLocatorLineShape a sh:NodeShape ;
+    sh:targetSubjectsOf codhmo:atLine ;
+    sh:property [
+        sh:path codhmo:atSection ; sh:minCount 1 ;
+        sh:message "codhmo:atLine requires codhmo:atSection: line anchors are relative to a section, not to the whole document." ] .

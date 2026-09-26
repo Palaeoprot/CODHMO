@@ -1,0 +1,26 @@
+# Normalisation table: Granzotti et al. 2026 taxon-string GRAMMAR -> codhmo determinacy concept.
+# Determinacy is a property of the authors' attribution, carried on the belief node with
+#   crminf:J5_holds_to_be. It is NOT derived from the observation->belief edge
+#   (codhmo:supports / compatibleWith): a belief backed by two peptides, one discriminating
+#   and one not, has two edges of different strength but a single determinacy.
+#
+# PARSE ORDER (all four steps, in this order):
+#   1. split on the parenthesis boundary -- the comma before "(" is OPTIONAL
+#        "X, (Y, Z)"  44 rows | "X (Y, Z)"  3 rows | "(Y, Z)"  4 rows | "X, Y, Z"  140 rows
+#      A comma-split alone mis-groups X with Y in the 3 no-comma rows.
+#   2. comma-split each side independently
+#   3. map any " x " member to its nothogenus (a hybrid can be ONE MEMBER of a comma
+#      list, e.g. "(Secale cereale x Triticum turgidum subsp. durum, Triticum intermedium)",
+#      so this runs AFTER the comma split, not before; hybrids never contain a comma)
+#   4. split remaining "/" members -- see indistinguishable
+#
+# S2 counts are of the 192 data rows of Table S2; 51 carry parentheses, matching the source.
+form	determinacy	competing	note
+X, Y, Z (no parentheses)	determined	yes, if >1 member	source states the taxon outright; multiple members compete at their stated rank
+X, (Y, Z)	determined (X) + alternatives-only (Y, Z)	yes	X is preferred; Y and Z are the authors' hedge
+X (Y, Z)	determined (X) + alternatives-only (Y, Z)	yes	same as above; no comma before the paren
+(Y, Z)	alternatives-only	yes, among members	NO preferred taxon exists; do not synthesise one
+A/B	determined (at the shared parent)	no	resolve A and B to their lowest common clade and record THAT taxon, e.g. Capra hircus/Ovis aries -> Caprinae 9963. Do not emit two competing hypotheses. codhmo:indistinguishable remains defined for pairs with no usable shared parent.
+Undetermined, compatible X	compatible-only	no	S1 only; distinct from alternatives-only
+Undetermine, compatible X	compatible-only	no	S1 typo (4 rows), missing final d
+Undetermined	(none)	n/a	emit the protein identification and NO TaxonomicHypothesis; a belief with no object would assert a claim the authors refused to make

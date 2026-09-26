@@ -1,0 +1,30 @@
+# Normalisation table: Granzotti et al. 2026 (PXD056094) institution strings -> canonical names.
+# Sources: column 1 "Institution" of both supplement TSVs in
+#          Palaeoprot-Publications/library/heritage_science/glues/
+#
+# THE DEFECT IS SYSTEMATIC, NOT SCATTERED. Every one of the 87 Table S2 rows spells it
+# "Birtish Museum"; every one of the 70 Table S1 rows spells it "British Museum". The two
+# tables therefore share NO institution string for that museum. Measured on the join key
+# Institution + Object Accession No. + Sample No.: un-normalised it yields 17 shared samples,
+# NONE of them British Museum; normalised it yields 25, of which 8 are British Museum. The
+# loss is silent and total for that institution, not a partial split. Normalise BEFORE joining.
+#
+# Verified 2026-09-19: 4 distinct source strings, all mapped; 0 accession-prefix disagreements;
+# 14 distinct objects and 25 joined samples, matching the paper's own counts.
+#
+# Normalise on join. NEVER edit the source TSVs: they are transcriptions of a published supplement.
+#
+# accession_prefix is an independent cross-check: every object accession carries the prefix of
+# its holding institution, so a row whose prefix disagrees with its normalised institution is a
+# transcription error worth stopping on. All 14 objects agree in the data as received.
+#
+# paper_abbrev is the abbreviation used in the paper's own Fig. 1 caption.
+#
+# external_id is deliberately EMPTY: stable identifiers (Wikidata, ISIL) are the right key for a
+# crm:E74_Group in an external-facing ontology, but none have been verified for these three, and
+# an unverified identifier is worse than none. Fill from an authority, not from memory.
+source_string	canonical_name	paper_abbrev	accession_prefix	external_id	defect	note
+British Museum	British Museum	BM	EA		ok	spelling used throughout Table S1 (70 rows)
+Birtish Museum	British Museum	BM	EA		typo	spelling used throughout Table S2 (87 rows); r/i transposed
+Medelhavsmuseet	Medelhavsmuseet	M	MM, MME		ok	Stockholm; 53 rows S1, 69 rows S2
+Ny Carlsberg Glyptotek	Ny Carlsberg Glyptotek	NCG	ÆIN		ok	Copenhagen; 25 rows S1, 36 rows S2

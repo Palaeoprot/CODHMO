@@ -38,7 +38,7 @@ fx:rec a codhmo:SourceRecord ;
     codhmo:inStore "ZoomzPeak" ; codhmo:inTable "ZOOMS_SPECTRA" ; codhmo:storeSchemaVersion "0.1.0" ;
     codhmo:hasKey fx:rec-dataset , fx:rec-file .
 fx:rec-dataset codhmo:keyName "dataset_id" ; codhmo:keyValue "FIXTURE-DATASET" .
-fx:rec-file codhmo:keyName "file_id" ; codhmo:keyValue "FIXTURE-FILE-0001" .
+fx:rec-file codhmo:keyName "run" ; codhmo:keyValue "FIXTURE-FILE-0001" .
 
 # Hypothesis (taxa only inside propositions, D7/D8). Sheep, so the Bos calf rule (D19) is not in play.
 fx:H1 a codhmo:TaxonomicHypothesis ; rdfs:label "SYNTHETIC: support is sheepskin"@en ;

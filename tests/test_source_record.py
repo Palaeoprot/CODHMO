@@ -43,16 +43,16 @@ def test_fixture_conforms():
 
 
 def test_round_trip_resolves_one_row_to_its_object():
-    rows = _resolve(_fixture(), "ZOOMS_SPECTRA", {"dataset_id": "FIXTURE-DATASET", "file_id": "FIXTURE-FILE-0001"})
+    rows = _resolve(_fixture(), "ZOOMS_SPECTRA", {"dataset_id": "FIXTURE-DATASET", "run": "FIXTURE-FILE-0001"})
     assert rows == {("rec", "obs", "H1", "S1", "object")}
 
 
 def test_round_trip_wrong_key_resolves_nothing():
-    assert _resolve(_fixture(), "ZOOMS_SPECTRA", {"dataset_id": "FIXTURE-DATASET", "file_id": "NO-SUCH-FILE"}) == set()
+    assert _resolve(_fixture(), "ZOOMS_SPECTRA", {"dataset_id": "FIXTURE-DATASET", "run": "NO-SUCH-FILE"}) == set()
 
 
 def test_round_trip_wrong_table_resolves_nothing():
-    assert _resolve(_fixture(), "MS2_SPECTRA", {"dataset_id": "FIXTURE-DATASET", "file_id": "FIXTURE-FILE-0001"}) == set()
+    assert _resolve(_fixture(), "MS2_SPECTRA", {"dataset_id": "FIXTURE-DATASET", "run": "FIXTURE-FILE-0001"}) == set()
 
 
 # (name, triples to remove from the fixture, triples to add)
@@ -65,7 +65,7 @@ BROKEN = [
     ("MS2 row without scan number", 'fx:rec codhmo:inTable "ZOOMS_SPECTRA" .',
      'fx:rec codhmo:inTable "MS2_SPECTRA" . fx:rec codhmo:hasKey fx:k-raw . '
      'fx:k-raw codhmo:keyName "raw_filename" ; codhmo:keyValue "x.raw" .'),
-    ("repeated key", "", 'fx:rec codhmo:hasKey fx:k-dup . fx:k-dup codhmo:keyName "file_id" ; codhmo:keyValue "OTHER" .'),
+    ("repeated key", "", 'fx:rec codhmo:hasKey fx:k-dup . fx:k-dup codhmo:keyName "run" ; codhmo:keyValue "OTHER" .'),
     ("key without value", 'fx:rec-file codhmo:keyValue "FIXTURE-FILE-0001" .', ""),
     ("record linked from sample", "", "fx:S1 codhmo:hasSourceRecord fx:rec ."),
     ("record link to non-record", "", "fx:obs codhmo:hasSourceRecord fx:S1 ."),

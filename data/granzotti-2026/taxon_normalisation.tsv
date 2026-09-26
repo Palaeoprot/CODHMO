@@ -1,0 +1,73 @@
+# Normalisation table: Granzotti et al. 2026 (PXD056094) taxon strings -> NCBI Taxonomy nodes.
+# Sources: "Granzotti et al. 2026 Table S1 - proteins identified.tsv" column 7 "Taxonomy source"
+#          "Granzotti et al. 2026 Table S2 - taxonomic specific peptides.tsv" column 7 "Blast ID"
+# Rule: the taxid is the key; the name is only a label. Record the rank the evidence
+#   discriminates -- genus-only stays at genus, never promoted to species. Rank is read
+#   BACK from NCBI, never inferred from the shape of the name (a trinomial does not imply
+#   subspecies: Bos taurus indicus resolves to Bos indicus at SPECIES rank).
+# Normalise on join. NEVER edit the source TSVs: they are transcriptions of a published supplement.
+# Verified against NCBI Taxonomy 2026-09-19. Re-check with tools/check_ncbi_taxa.py.
+#
+# defect: ok | typo | synonym | infra-rank | hybrid | shared-parent
+source_string	taxid	current_label	rank	defect	note
+Aegilops tauschii subsp. strangulata	200361	Aegilops tauschii subsp. strangulata	subspecies	ok	
+Agilops tauschii subsp. strangulata	200361	Aegilops tauschii subsp. strangulata	subspecies	typo	Aegilops misspelled
+Alcelaphinae	37170	Alcelaphinae	subfamily	ok	
+Bison bison bison	43346	Bison bison bison	subspecies	ok	
+Bodorcas taxicolor	37181	Budorcas taxicolor	species	typo	Budorcas misspelled
+Budarcas taxicolor	37181	Budorcas taxicolor	species	typo	Budorcas misspelled
+Bos	9903	Bos sp.	genus	ok	label as "Bos sp." per rank rule
+Bos sp	9903	Bos sp.	genus	typo	missing full stop
+Bos sp.	9903	Bos sp.	genus	ok	
+Bos. sp	9903	Bos sp.	genus	typo	full stop misplaced
+Bos mutus	72004	Bos mutus	species	ok	
+Bos taurus	9913	Bos taurus	species	ok	
+Bovinae	27592	Bovinae	subfamily	ok	
+Bubalus bubalis	89462	Bubalus bubalis	species	ok	
+Bubalus cabaranensis	3119969	Bubalus kerabau	species	typo	misspelling of the carabanensis synonym
+Bubalus carabanensis	3119969	Bubalus kerabau	species	synonym	VALID source spelling; NCBI current name is Bubalus kerabau
+Capra hibex	72542	Capra ibex	species	typo	ibex misspelled
+Capra ibex	72542	Capra ibex	species	ok	
+Capra hircus	9925	Capra hircus	species	ok	
+Capra hircus/Ovis aries	9963	Caprinae	subfamily	shared-parent	the caprine call: evidence cannot separate sheep from goat, so recorded at their shared subfamily rank (9963). Printed members Capra hircus (9925) and Ovis aries (9940) are kept as a label note, NOT as two competing hypotheses. Determinacy is 'determined' at subfamily, not 'indistinguishable': naming the clade the evidence does reach is a positive claim.
+Caprinae	9963	Caprinae	subfamily	ok	
+Cephalophinae	9952	Cephalophinae	subfamily	ok	
+Connochaetes taurinus	9927	Connochaetes taurinus	species	ok	
+Damaliscus lunatus	9929	Damaliscus lunatus	species	ok	
+Embryophyta	3193	Embryophyta	clade	ok	
+Equus asinus	9793	Equus asinus	species	ok	
+Equus caballus	9796	Equus caballus	species	ok	
+Equus sp.	9789	Equus sp.	genus	ok	
+Gallus gallus	9031	Gallus gallus	species	ok	
+Hordeum	4512	Hordeum sp.	genus	ok	
+Hordeum vulgare	4513	Hordeum vulgare	species	ok	
+Hordeum vulgare subsp. vulgare	112509	Hordeum vulgare subsp. vulgare	subspecies	ok	
+Mesangiospermae	1437183	Mesangiospermae	clade	ok	
+Moringa oleifera	3735	Moringa oleifera	species	ok	
+Oryx	9957	Oryx sp.	genus	ok	
+Oryx dammah	59534	Oryx dammah	species	ok	
+Oryx gazella	9958	Oryx gazella	species	ok	
+Ovis aries	9940	Ovis aries	species	ok	
+Pantholops hodgsonii	59538	Pantholops hodgsonii	species	ok	
+Philantomba maxwellii	907741	Philantomba maxwellii	species	ok	
+Phoenix dactyfera	42345	Phoenix dactylifera	species	typo	dactylifera misspelled
+Poaceae	4479	Poaceae	family	ok	
+Pooideae	147368	Pooideae	subfamily	ok	
+Prionailurus bengalensis	37029	Prionailurus bengalensis	species	ok	
+Secale cereale	4550	Secale cereale	species	ok	
+Secale cereale x Triticum turgidum subsp. durum	49317	x Triticosecale	genus	hybrid	triticale: ONE nothogenus, never split on " x " into competing parents
+Sesamum indicum	4182	Sesamum indicum	species	ok	
+Triticeae	147389	Triticeae	tribe	ok	
+Triticum	4564	Triticum sp.	genus	ok	
+Triticum sp.	4564	Triticum sp.	genus	ok	
+Triticum aestivum	4565	Triticum aestivum	species	ok	
+Triticum aestvum	4565	Triticum aestivum	species	typo	aestivum misspelled
+Ttiticum aestivum	4565	Triticum aestivum	species	typo	Triticum misspelled
+Triticum aestivum cv. Chinese Spring	4565	Triticum aestivum	species	infra-rank	cultivar below NCBI granularity; keep "cv. Chinese Spring" as label qualifier only
+Triticum aestivum cv. Chinese	4565	Triticum aestivum	species	typo	source string truncated mid-cultivar (1 row); cf. cv. Chinese Spring (5 rows)
+Triticum dicoccoides	85692	Triticum dicoccoides	species	ok	
+Triticum dicoccoidess	85692	Triticum dicoccoides	species	typo	trailing s
+Triticum intermedium	85679	Thinopyrum intermedium	species	synonym	NCBI current name is Thinopyrum intermedium
+Triticum turgidum subsp. durum	4567	Triticum turgidum subsp. durum	subspecies	ok	
+Triticum turgidum subsp. drum	4567	Triticum turgidum subsp. durum	subspecies	typo	durum misspelled
+Triticum urartu	4572	Triticum urartu	species	ok	

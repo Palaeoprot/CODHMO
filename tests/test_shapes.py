@@ -118,7 +118,8 @@ def test_taxon_must_be_numeric_ncbi_iri(bad):
 
 @pytest.mark.parametrize("name", ["kasso-2025-pakepu-white-paste", "sargent-2025-aein656-gold-leaf-adhesive",
                                   "charter-illustrative", "fiddyment-2021-birth-girdle",
-                                  "palandri-2024-missale-nidrosiense", "brandt-2023-scythian-leather"])
+                                  "palandri-2024-missale-nidrosiense", "brandt-2023-scythian-leather",
+                                  "granzotti-2026-mm13944-s1-ground-layer"])
 def test_step6_examples_have_no_violations(name):
     ont = Graph().parse(ROOT / "ontology" / "codhmo.ttl")
     shapes = Graph().parse(ROOT / "shapes" / "codhmo-core-shapes.ttl")
@@ -158,3 +159,89 @@ def test_archaic_or_genus_homo_does_not_require_flag(taxon):
             rdf:object <http://purl.obolibrary.org/obo/NCBITaxon_{taxon}> .""", format="turtle")
     conforms, text = _validate(g)
     assert conforms, text
+
+
+# --- taxonomic determinacy (codhmo:DeterminacyScheme) ----------------------
+
+_DET_BASE = """
+ex:p a crminf:I4_Proposition_Set .
+ex:a a codhmo:TaxonomicHypothesis ; crminf:J4_that ex:p ; crminf:J5_holds_to_be codhmo:{} .
+ex:b a codhmo:TaxonomicHypothesis ; crminf:J4_that ex:p ; crminf:J5_holds_to_be codhmo:determined .
+ex:a codhmo:hasCompetingHypothesis ex:b .
+ex:obs a crmsci:S4_Single_Observation ; codhmo:supports ex:a, ex:b .
+"""
+
+
+def _det(ttl):
+    return _validate(Graph().parse(data=PREFIXES + ttl, format="turtle"))
+
+
+def test_indistinguishable_must_not_compete():
+    """Members the method cannot separate are an irreducible set, not rival hypotheses."""
+    conforms, _ = _det(_DET_BASE.format("indistinguishable"))
+    assert not conforms
+
+
+def test_alternatives_only_may_compete():
+    """Contrast with the above: unpreferred candidates ARE rivals, so competing is legitimate."""
+    conforms, text = _det(_DET_BASE.format("alternatives-only"))
+    assert conforms, text
+
+
+def test_at_most_one_determinacy():
+    conforms, _ = _det("""
+        ex:p a crminf:I4_Proposition_Set .
+        ex:a a codhmo:TaxonomicHypothesis ; crminf:J4_that ex:p ;
+            crminf:J5_holds_to_be codhmo:determined, codhmo:compatible-only .""")
+    assert not conforms
+
+
+def test_determinacy_only_on_a_belief():
+    conforms, _ = _det(
+        "ex:x a crminf:I4_Proposition_Set ; crminf:J5_holds_to_be codhmo:determined .")
+    assert not conforms
+
+
+def test_taxonomic_hypothesis_requires_proposition():
+    conforms, _ = _det(
+        "ex:a a codhmo:TaxonomicHypothesis ; crminf:J5_holds_to_be codhmo:determined .")
+    assert not conforms
+
+
+# --- document locators (codhmo:DocumentLocator) ----------------------------
+
+_DOI = "<https://doi.org/10.1126/sciadv.ady3618>"
+
+
+def test_prose_locator_conforms():
+    conforms, text = _det(f"""
+        ex:loc a codhmo:DocumentLocator ; dcterms:source {_DOI} ;
+            codhmo:atSection "04_Animal_proteins" ; codhmo:atLine "L26" .""")
+    assert conforms, text
+
+
+def test_table_locator_conforms():
+    conforms, text = _det(f"""
+        ex:loc a codhmo:DocumentLocator ; dcterms:source {_DOI} ;
+            codhmo:atTable "Table S2.tsv" ;
+            codhmo:hasKey ex:k . ex:k codhmo:keyName "Sample No." ; codhmo:keyValue "S1" .""")
+    assert conforms, text
+
+
+def test_bare_doi_is_not_a_locator():
+    """A DOI alone does not say where in the paper the claim is."""
+    conforms, _ = _det(f"ex:loc a codhmo:DocumentLocator ; dcterms:source {_DOI} .")
+    assert not conforms
+
+
+def test_line_without_section_rejected():
+    """Line anchors are section-relative, so a bare line number is unresolvable."""
+    conforms, _ = _det(f"""
+        ex:loc a codhmo:DocumentLocator ; dcterms:source {_DOI} ;
+            codhmo:atTable "Table S2.tsv" ; codhmo:atLine "L26" .""")
+    assert not conforms
+
+
+def test_locator_must_be_a_document_locator():
+    conforms, _ = _det("ex:obs codhmo:hasDocumentLocator ex:notALocator .")
+    assert not conforms

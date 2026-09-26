@@ -1,6 +1,6 @@
 # CODHMO design decisions
 
-_Last updated: 2026-09-17_
+_Last updated: 2026-09-26 (D24–D34 accepted)_
 
 Working notes for the final documentation. Each entry records what was decided, the alternatives, and why. Source handover: *CODICUM Heritage Materials & AI Agent* (17 Sept 2026).
 
@@ -134,8 +134,73 @@ Bulk data (peak lists, spectra) stays in its store; the graph holds a `codhmo:So
 - **Known weaknesses (accepted 2026-09-17):** keys break if a file is renamed or a dataset re-ingested; the store does not yet guarantee key uniqueness; `ms2_title` format depends on the converter. The recorded schema version is what makes a later migration possible.
 - **Round trip:** `queries/q11` walks record → observation → hypothesis → sample → object. It is tested on a synthetic fixture (`examples/zooms-sourcerecord-fixture.ttl`) because no ZooMS analysis has been run yet.
 
+## Decisions from the ZooMS deposit pilots (accepted 2026-09-26)
+
+These come from converting two public ZooMS deposits end to end (`data/ZOOMS_PILOT_FINDINGS.md`): Viñas-Caron et al. 2023, the AM 795 4to palimpsest (pilot A), and Peters et al. 2025, extinct Australian megafauna reference spectra (pilot B). All were accepted on 2026-09-26 and applied in ontology 0.2-draft; F* and Z* refer to the findings file. **Not yet applied:** D31 (reuse event; the pilot A converter does not yet emit groups A–D), D33 (needs the ZoomzPeak derived table), D25's DOI on pilot records is emitted but not required by SHACL. Direction set on 2026-09-26: ZoomzPeak is to be an mzPeak (HUPO-PSI) profile, and CODHMO stays aligned with CIDOC CRM.
+
+### D24. Source-record keys follow mzPeak, not store columns (amends D23) — *Accepted 2026-09-26*
+`ZOOMS_SPECTRA` keys are named after mzPeak concepts, so a locator stays valid when ZoomzPeak becomes an mzPeak profile.
+- **Required keys:** `dataset_id` and `run` (the mzPeak run: the source file stem, without extension).
+- **No spectrum index:** a ZooMS MALDI run holds one spectrum, so ZoomzPeak has no `spectrum_index` and none is required (decided 2026-09-26). If a multi-spectrum ZooMS format ever appears, the index is added as a key then.
+- **Optional key:** `id`, the spectrum's native ID in mzPeak's `spectra_metadata.id` sense (e.g. the MALDI spot in `…P_azael.G6`).
+- **Sample vs spectrum ID (decided 2026-09-26, follow mzPeak):** ZoomzPeak splits today's `sample_id` into the spectrum `id` and a run-level sample list (mzPeak `samples[]`: `id`, `name`, parameters such as replicate). Today the one column holds a replicate label in pilot A and a native ID in pilot B (Z2, Z5).
+- **Why:** both pilots had to key on `file_id`, a filename that includes `.mzML` and is unique only inside its dataset (Z1).
+- **Dataset key:** `dataset_id` must be an opaque, stable key, with the human label (author/year/topic) as metadata. The store currently files Peters et al. 2025 as `Douka_2024_Australian_Megafauna`, and renaming it would break every locator (Z7).
+- **Checksums:** mzPeak lists each source file with a checksum. Most public ZooMS deposits don't provide one, so ZoomzPeak records a checksum only when the deposit does (e.g. PRIDE, some Zenodo records); it is never a key.
+- **Migration:** the recorded `storeSchemaVersion` tells a migration which locators use the old `file_id` form. Until ZoomzPeak writes `run`, converters emit `file_id` as well, so D23's SHACL keeps passing.
+- **Later (peak picking):** ZoomzPeak currently stores profile spectra only, so mzPeak's profile/centroid split doesn't apply yet. Once spectra are peak-picked, centroid rows gain columns for the expected m/z and the delta of the centroid from it; that is a separate decision.
+
+### D25. Spectra outside ProteomeXchange need a citable locator — *Accepted 2026-09-26*
+mzPeak and PSI use the Universal Spectrum Identifier (`mzspec:<PXD>:<run>:<index>`), which needs a ProteomeXchange accession. Most ZooMS spectra are on Zenodo, Mendeley Data, Figshare or ADS and have none.
+- **Historical data:** these spectra will never have a USI. A `SourceRecord` carries `dcterms:source` = the deposit DOI (e.g. `10.5281/zenodo.6967158`), so a spectrum can still be cited from the graph without the store.
+- **Future:** a spectrum identifier for ZooMS is one of the aims of proposing ZoomzPeak as a standard. When it exists, it becomes an optional `SourceRecord` key alongside the DOI; the DOI is kept for historical records.
+
+### D26. The method is stated on the inference — *Accepted 2026-09-26*
+A `crminf:I5_Inference_Making` that concludes a taxonomic belief records its technique with `crm:P33_used_specific_technique`, pointing to a concept in a new `codhmo:IdentificationMethodScheme` (manual marker reading, SpecieScan, PAMPA, database search, …).
+- **Why:** pilot A reports a manual and an automated call per sample, and they disagree for UoC29 and UoC32. Without a method, the two beliefs can only be told apart by IRI (F2).
+- **Paper as source:** the publication goes on the I5 as `dcterms:source`. `J1_used_as_premise` stays for beliefs and observations (F3), which settles the earlier "paper as premise" wording.
+
+### D27. Mixtures use D15; a doubtful member gets its own determinacy — *Accepted 2026-09-26*
+Pilot A's manual call `Sheep+Goat+Calf?` is a mixture: several skins or contamination on one leaf. D15 already covers this: one `TaxonomicHypothesis` per member, linked by `compatibleWith` and not competing.
+- **Correction:** the pilot A converter wrongly tagged the members `compatible-only`. It will follow D15 (F1).
+- **New:** a member the source marks as doubtful (the `?` on Calf) gets `J5_holds_to_be codhmo:tentative`, a new concept in `DeterminacyScheme`.
+- **D19 interaction:** the calf rule takes only a `determined` Bos belief as premise, so a tentative Bos member never yields a calfskin claim (F5).
+
+### D28. A reference specimen's taxon is a type assignment, not a hypothesis — *Accepted 2026-09-26*
+When a study takes a specimen's identity as given (curated, morphological or voucher ID) and uses its spectra to derive markers, that identity is a `crm:E17_Type_Assignment`: P41 classified the material, P42 assigned the taxon, P14 by the curator or author team, with `dcterms:source` the paper. It is not a `TaxonomicHypothesis` supported by the spectra.
+- **Why:** in pilot B the taxon is the premise and the markers are the conclusion. A hypothesis supported by its own reference spectra is circular (F11).
+- **Marker derivation:** an I5 whose premises are the type assignment and the spectra, and whose conclusion is a marker-set belief. The marker set needs a class, which is left open.
+- **CRM-native:** E17 is already in CIDOC CRM, so no new class is needed for the identity.
+
+### D29. Taxa missing from NCBI may use a second authority (amends D8) — *Accepted 2026-09-26*
+NCBI stays the required authority whenever it has the taxon. When it does not, a biological-source proposition may use a Catalogue of Life, GBIF backbone or Paleobiology Database taxon IRI, and must also give the nearest NCBI ancestor with `codhmo:nearestNcbiTaxon`.
+- **Why:** pilot B's *Zygomaturus trilobus* and *Palorchestes azael* have no NCBI node at species, genus or family level. Under D8 they collapse to the order Diprotodontia (38609), erasing exactly what ZooMS of extinct fauna produces (F13). *Protemnodon mamkurra* reaches only genus level (2493641).
+- **Guard:** SHACL still rejects names and IRIs from other sources. `check_ncbi_taxa.py` reports when an NCBI node has since appeared.
+
+### D30. Bone, dentine and extract materials; samples of samples — *Accepted 2026-09-26*
+Add `bone`, `dentine`, `antler`, `ivory` and `collagen-extract` (with `gelatin` as a narrower concept) to the material scheme. A sample drawn from an earlier extract is an `S13_Sample` whose `O3_sampled_from` is the earlier sample, which CRMsci allows.
+- **Why:** pilot B had to declare bone and gelatin locally, and specimen MBS01's sample is ultrafiltered gelatin made for radiocarbon dating (F12).
+
+### D31. Reuse of a support is a production event — *Accepted 2026-09-26*
+A leaf reused from an earlier book is modelled with CRM production: the earlier object is an `E22_Human-Made_Object`, and the reuse is an `E12_Production` with `P16_used_specific_object` (the earlier leaf) and `P108_has_produced` (the new codex). Attributing a leaf to a particular earlier book is a hypothesis, as with taxa.
+- **Why:** pilot A's headline result is that AM 795 4to was assembled from at least four earlier manuscripts (groups A–D), and CODHMO had no way to say it (F8).
+
+### D32. Leaf identity is separate from sampling — *Accepted 2026-09-26*
+There is one `MaterialLayer` per physical leaf or bifolio, keyed by folio (and quire), and several samplings may point at it.
+- **Why:** pilot A made one layer per sample, which duplicated folio 89 (sampled as UoC21 and UoC53) (F9).
+
+### D33. Derived measurements live in ZoomzPeak, not in the graph — *Accepted 2026-09-26*
+Quantities computed from spectra (PQI, SE, identification score, proteomic cluster) go in a ZoomzPeak derived table keyed as in D24. The graph holds an `S4_Single_Observation` pointing at that row.
+- **Why:** this keeps the D23 split (measurement in the store, interpretation in the graph). Pilot A dropped all of these because neither side had a place for them (F6).
+- **Codicological observations** (ink, ruling, thickness, follicle pattern; F7) stay open. They are not spectral, so they need a CRMsci observation pattern.
+
+### D34. Validation recipe — *Accepted 2026-09-26*
+Shapes run against the **data and ontology merged** (`validate(data + ont, inference="rdfs")`), as the tests do. Passing the ontology as `ont_graph` gives false P45 violations and J5 warnings (F10). Say so in the README and the converter docstrings.
+
 ## Open items
-- Replace the synthetic source-record fixture with a real ZooMS row once an analysis has been run; switch locators to `spectrum_id` when ZoomzPeak provides it.
+- ~~Replace the synthetic source-record fixture with a real ZooMS row~~: real rows now exist in `data/vinas-caron-2023/` and `data/peters-2025/` (2026-09-26). The fixture stays as a minimal test; for key names see D24.
+- ZoomzPeak changes needed for D24/D33: a `run` column and a spectrum `id` column (mzPeak naming); a sample list separate from replicates (Z2); instrument taken from the paper when the files lack it (Z3); a record of spectra measured but not deposited (Z4).
+- Marker-set class for D28.
 - Palandri et al. 2024 (Zenodo 18772648): MA01-MA20 sample-to-fragment/location mapping requested from the author (2026-09-17); the Missale example holds one representative spine sample until then.
 - IN-A001 has not been sampled yet; its sampler, date and results will be added after processing, then tested with the researcher.
 - Real analytical values to replace the PLACEHOLDERs in the Pepys example.
