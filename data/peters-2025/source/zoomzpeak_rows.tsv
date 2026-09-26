@@ -1,0 +1,10 @@
+dataset_id	file_id	sample_id	n_peaks	is_centroided	schema_version
+Douka_2024_Australian_Megafauna	MBS01_Zygomaturus-trilobus_1.mzML	MBS01_Zygomaturus-trilobus_1_20201021_FossilMaterial_2_KYC.H10	93184	False	0.1.0
+Douka_2024_Australian_Megafauna	MBS01_Zygomaturus-trilobus_2.mzML	MBS01_Zygomaturus-trilobus_2_20201021_FossilMaterial_2_KYC.H13	93184	False	0.1.0
+Douka_2024_Australian_Megafauna	MBS01_Zygomaturus-trilobus_3.mzML	MBS01_Zygomaturus-trilobus_3_20201021_FossilMaterial_2_KYC.H16	93184	False	0.1.0
+Douka_2024_Australian_Megafauna	MCP02-Protemnodon-mamkurra_2.mzML	MCP02-Protemnodon-mamkurra_2_P_anak.A13	186538	False	0.1.0
+Douka_2024_Australian_Megafauna	MCP02-Protemnodon-mamkurra_3.mzML	MCP02-Protemnodon-mamkurra_3_P_anak.A21	186538	False	0.1.0
+Douka_2024_Australian_Megafauna	MCP02_Protemnodon-mamkurra_1.mzML	MCP02_Protemnodon-mamkurra_1_P_anak.A5	186538	False	0.1.0
+Douka_2024_Australian_Megafauna	SCP02_Palorchestes-azael_1.mzML	SCP02_Palorchestes-azael_1_P_azael.G6	186538	False	0.1.0
+Douka_2024_Australian_Megafauna	SCP02_Palorchestes-azael_2.mzML	SCP02_Palorchestes-azael_2_P_azael.G14	186538	False	0.1.0
+Douka_2024_Australian_Megafauna	SCP02_Palorchestes-azael_3.mzML	SCP02_Palorchestes-azael_3_P_azael.G22	186538	False	0.1.0

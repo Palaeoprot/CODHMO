@@ -150,6 +150,43 @@ shapes:NCBITaxonIdShape a sh:NodeShape ;
             SELECT $this ?value WHERE {
                 $this rdf:predicate codhmo:hasBiologicalSource ; rdf:object ?value .
                 FILTER (!isIRI(?value) || !REGEX(STR(?value), "^http://purl[.]obolibrary[.]org/obo/NCBITaxon_[0-9]+$"))
+                # D29: a second-authority IRI is allowed only with a numeric NCBI ancestor.
+                FILTER NOT EXISTS {
+                    FILTER (isIRI(?value) && REGEX(STR(?value), "^(https://www[.]gbif[.]org/species/[0-9]+|https://www[.]catalogueoflife[.]org/data/taxon/[A-Za-z0-9]+|https://paleobiodb[.]org/classic/basicTaxonInfo[?]taxon_no=[0-9]+)$"))
+                    $this codhmo:nearestNcbiTaxon ?n .
+                    FILTER (isIRI(?n) && REGEX(STR(?n), "^http://purl[.]obolibrary[.]org/obo/NCBITaxon_[0-9]+$"))
+                }
+            }""" ] .
+
+# D26: an inference concluding a taxonomic belief SHOULD state its method -------
+shapes:InferenceMethodShape a sh:NodeShape ;
+    sh:targetClass crminf:I5_Inference_Making ;
+    sh:severity sh:Warning ;
+    sh:sparql [
+        sh:message "An inference concluding a taxonomic hypothesis SHOULD state its method (crm:P33_used_specific_technique, from codhmo:IdentificationMethodScheme)." ;
+        sh:prefixes [ sh:declare
+            [ sh:prefix "crm" ; sh:namespace "http://www.cidoc-crm.org/cidoc-crm/"^^xsd:anyURI ] ,
+            [ sh:prefix "crminf" ; sh:namespace "http://www.cidoc-crm.org/extensions/crminf/"^^xsd:anyURI ] ,
+            [ sh:prefix "codhmo" ; sh:namespace "https://codicum.eu/ontology/codhmo#"^^xsd:anyURI ] ] ;
+        sh:select """
+            SELECT $this WHERE {
+                $this crminf:J2_concluded_that ?h . ?h a codhmo:TaxonomicHypothesis .
+                FILTER NOT EXISTS { $this crm:P33_used_specific_technique ?m }
+            }""" ] .
+
+# D27: a domain rule (D19) takes only determined beliefs as premises -------------
+shapes:RulePremiseDeterminedShape a sh:NodeShape ;
+    sh:targetClass crminf:I5_Inference_Making ;
+    sh:sparql [
+        sh:message "An inference applying a domain rule MUST NOT take a tentative (or otherwise non-determined) belief as premise." ;
+        sh:prefixes [ sh:declare
+            [ sh:prefix "crminf" ; sh:namespace "http://www.cidoc-crm.org/extensions/crminf/"^^xsd:anyURI ] ,
+            [ sh:prefix "codhmo" ; sh:namespace "https://codicum.eu/ontology/codhmo#"^^xsd:anyURI ] ] ;
+        sh:select """
+            SELECT $this ?premise WHERE {
+                $this crminf:J3_applied ?rule ; crminf:J1_used_as_premise ?premise .
+                ?premise crminf:J5_holds_to_be ?d .
+                FILTER (?d != codhmo:determined)
             }""" ] .
 
 shapes:ComponentRoleValueShape a sh:NodeShape ;
@@ -245,7 +282,7 @@ shapes:SourceRecordShape a sh:NodeShape ;
                 $this codhmo:inTable ?table .
                 # Required key columns per table (pyshacl forbids VALUES in constraints).
 { BIND("ZOOMS_SPECTRA" AS ?t) BIND("dataset_id" AS ?missing) }
-                UNION { BIND("ZOOMS_SPECTRA" AS ?t) BIND("file_id" AS ?missing) }
+                UNION { BIND("ZOOMS_SPECTRA" AS ?t) BIND("run" AS ?missing) }
                 UNION { BIND("MS2_SPECTRA" AS ?t) BIND("dataset_id" AS ?missing) }
                 UNION { BIND("MS2_SPECTRA" AS ?t) BIND("raw_filename" AS ?missing) }
                 UNION { BIND("MS2_SPECTRA" AS ?t) BIND("scan_number" AS ?missing) }

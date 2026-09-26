@@ -21,7 +21,7 @@
     skos:scopeNote "CODHMO properties carry no rdfs:domain/rdfs:range: under RDFS inference those silently retype misused subjects/objects. Intended subjects/objects are stated in definitions and enforced by SHACL (D10, D22)."@en ;
     dcterms:title "CODICUM Heritage Material Ontology (CODHMO) — Core"@en ;
     dcterms:description "Thin domain layer linking heritage objects, material layers, samples, analyses, evidence and competing hypotheses. Reuses CIDOC CRM, CRMsci, CRMinf and PROV-O; defines only what they lack."@en ;
-    owl:versionInfo "0.1-draft" ;
+    owl:versionInfo "0.2-draft" ;
     owl:versionIRI <https://codicum.eu/ontology/codhmo/0.1> ;
     vann:preferredNamespacePrefix "codhmo" ;
     vann:preferredNamespaceUri "https://codicum.eu/ontology/codhmo#" ;
@@ -216,6 +216,27 @@ codhmo:parchment a skos:Concept, crm:E57_Material ;
     skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
     skos:prefLabel "parchment"@en .
 
+# D30: skeletal and extract materials (ZooMS of bone, tooth, antler, ivory; re-used extracts).
+codhmo:bone a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "bone"@en .
+codhmo:dentine a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "dentine"@en .
+codhmo:ivory a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:broader codhmo:dentine ;
+    skos:prefLabel "ivory"@en .
+codhmo:antler a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "antler"@en .
+codhmo:collagen-extract a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
+    skos:prefLabel "collagen extract"@en ;
+    skos:scopeNote "A laboratory extract that is itself sampled, e.g. gelatin prepared for radiocarbon dating. The sample it came from is linked with crmsci:O3_sampled_from (D30)."@en .
+codhmo:gelatin a skos:Concept, crm:E57_Material ;
+    skos:inScheme codhmo:MaterialScheme ; skos:broader codhmo:collagen-extract ;
+    skos:prefLabel "gelatin"@en ; skos:altLabel "ultrafiltered gelatin"@en .
+
 codhmo:paper a skos:Concept, crm:E57_Material ;
     skos:inScheme codhmo:MaterialScheme ; skos:topConceptOf codhmo:MaterialScheme ;
     skos:prefLabel "paper"@en .
@@ -317,6 +338,10 @@ codhmo:keyName a owl:DatatypeProperty ;
     rdfs:label "key name"@en ;
     skos:definition "The column name of a source-record key."@en .
 
+codhmo:nearestNcbiTaxon a owl:ObjectProperty ;
+    rdfs:label "nearest NCBI taxon"@en ;
+    skos:definition "On a biological-source proposition whose object is not an NCBI taxon (D29): the closest NCBI ancestor, as a numeric NCBITaxon IRI. Stated only when NCBI lacks the taxon itself."@en .
+
 codhmo:keyValue a owl:DatatypeProperty ;
     rdfs:label "key value"@en ;
     skos:definition "The value of a source-record key column, as a string."@en .
@@ -353,6 +378,31 @@ codhmo:compatible-only a skos:Concept ;
     skos:prefLabel "compatible only"@en ;
     skos:definition "The source declines to determine the taxon but names one the evidence is compatible with."@en ;
     skos:scopeNote "The absence of any attribution is modelled by the ABSENCE of a codhmo:TaxonomicHypothesis, never by a concept in this scheme: a belief whose proposition has no object would assert a claim the source refused to make."@en .
+
+codhmo:tentative a skos:Concept ;
+    skos:inScheme codhmo:DeterminacyScheme ; skos:topConceptOf codhmo:DeterminacyScheme ;
+    skos:prefLabel "tentative"@en ;
+    skos:definition "The source names the taxon but marks it as doubtful (e.g. 'Calf?')."@en ;
+    skos:scopeNote "D27. A tentative belief is never a premise for a domain rule such as D19 (bovine parchment = calf), which requires codhmo:determined."@en .
+
+#################################################################
+# Identification methods (D26): stated on crminf:I5_Inference_Making via crm:P33_used_specific_technique
+#################################################################
+
+codhmo:IdentificationMethodScheme a skos:ConceptScheme ;
+    skos:prefLabel "CODHMO identification method"@en .
+codhmo:method-manual-markers a skos:Concept, crm:E29_Design_or_Procedure ;
+    skos:inScheme codhmo:IdentificationMethodScheme ; skos:topConceptOf codhmo:IdentificationMethodScheme ;
+    skos:prefLabel "manual marker reading"@en ;
+    skos:definition "A person reads diagnostic ZooMS peptide markers from the spectrum."@en .
+codhmo:method-automated-markers a skos:Concept, crm:E29_Design_or_Procedure ;
+    skos:inScheme codhmo:IdentificationMethodScheme ; skos:topConceptOf codhmo:IdentificationMethodScheme ;
+    skos:prefLabel "automated marker matching"@en ;
+    skos:definition "Software matches ZooMS peptide markers (e.g. SpecieScan, PAMPA). Name the software with prov:wasAssociatedWith where known."@en .
+codhmo:method-database-search a skos:Concept, crm:E29_Design_or_Procedure ;
+    skos:inScheme codhmo:IdentificationMethodScheme ; skos:topConceptOf codhmo:IdentificationMethodScheme ;
+    skos:prefLabel "sequence database search"@en ;
+    skos:definition "LC-MS/MS spectra searched against a sequence database; taxa follow from matched peptides."@en .
 
 
 #################################################################

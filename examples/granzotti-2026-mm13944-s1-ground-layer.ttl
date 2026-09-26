@@ -108,6 +108,7 @@ g:k-prot codhmo:keyName "Protein name" ; codhmo:keyValue "Collagen 1 alpha 1 (fr
 
 g:inference-bos a crminf:I5_Inference_Making ;
     rdfs:label "Taxon assignment from diagnostic COL1a2 peptides"@en ;
+    crm:P33_used_specific_technique codhmo:method-database-search ;
     crminf:J1_used_as_premise g:obs-col1a2 ;
     crminf:J2_concluded_that g:H-bos .
 
