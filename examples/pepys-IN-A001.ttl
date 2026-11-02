@@ -1,9 +1,9 @@
-# CODHMO v0.1 reference instance — Pepys MS 2981, sample IN-A001 (handover §3, §32).
+# CODHMO reference instance — Pepys MS 2981, sample IN-A001 (handover §3, §32).
 #
-# STRUCTURE IS CANONICAL; ANALYTICAL CONTENT IS PLACEHOLDER.
-# No real LC-MS/MS results are encoded here. PEP001, the seqdb-gen version/config
-# and the evidential links are illustrative stand-ins, marked codhmo-ex:placeholder,
-# to be replaced when the IN-A001 search is run. Taxon IRIs are NCBI Taxonomy.
+# SAMPLING & MALDI SPECTRAL DATA RECORD REAL LABORATORY PROVENANCE (PSP-0011).
+# LC-MS/MS bottom-up sequence search results (PEP001, seqdb-gen config) remain
+# illustrative stand-ins, marked codhmo-ex:placeholder, until search engine
+# analysis of the raw timsTOF spectra is finalized. Taxon IRIs are NCBI Taxonomy.
 
 @prefix codhmo: <https://codicum.eu/ontology/codhmo#> .
 @prefix crm:    <http://www.cidoc-crm.org/cidoc-crm/> .
@@ -15,6 +15,7 @@
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix ncbi:   <http://purl.obolibrary.org/obo/NCBITaxon_> .
 @prefix aat:    <http://vocab.getty.edu/aat/> .
+@prefix xsd:    <http://www.w3.org/2001/XMLSchema#> .
 @prefix pepys:  <https://codicum.eu/data/pepys-2981/> .
 
 #################################################################
@@ -51,8 +52,18 @@ pepys:sampling-IN-A001 a crmsci:S2_Sample_Taking ;
     rdfs:label "Removal of sample IN-A001"@en ;
     crmsci:O3_sampled_from pepys:adhesive-layer-frag4 ;
     crmsci:O4_sampled_at pepys:region-under-frag4 ;
-    crmsci:O5_removed pepys:IN-A001 .
-    # TODO: crm:P14_carried_out_by, crm:P4_has_time-span once known.
+    crmsci:O5_removed pepys:IN-A001 ;
+    crm:P14_carried_out_by pepys:sampler-insular ;
+    crm:P4_has_time-span pepys:sampling-time-IN-A001 ;
+    rdfs:comment "Sampled under INSULAR sampling event SE0012, submitted 2026-03-12."@en .
+
+pepys:sampler-insular a crm:E74_Group ;
+    rdfs:label "INSULAR Project Sampling Team"@en .
+
+pepys:sampling-time-IN-A001 a crm:E52_Time-Span ;
+    rdfs:label "Sampling date for IN-A001 (event SE0012)"@en ;
+    crm:P82a_begin_of_the_begin "2026-03-12T00:00:00"^^xsd:dateTime ;
+    crm:P82b_end_of_the_end "2026-03-12T23:59:59"^^xsd:dateTime .
 
 pepys:region-under-frag4 a crm:E53_Place ;
     rdfs:label "Beneath fragment 4, page 5"@en .
@@ -60,9 +71,54 @@ pepys:region-under-frag4 a crm:E53_Place ;
 
 pepys:IN-A001 a crmsci:S13_Sample ;
     crm:P1_is_identified_by pepys:IN-A001-id ;
-    crmsci:O5i_was_removed_by pepys:sampling-IN-A001 .
+    crmsci:O5i_was_removed_by pepys:sampling-IN-A001 ;
+    rdfs:comment "Extracted in batch DB019 on 2026-04-10 by Zandra Fagernäs; spotted in batch SB-0007 on plate PSP-0011 (wells G2, G15, H3) on 2026-04-18."@en .
 
 pepys:IN-A001-id a crm:E42_Identifier ; crm:P190_has_symbolic_content "IN-A001" .
+
+#################################################################
+# MALDI ZooMS Screening & Spectral Observations (timsTOF fleX)
+#################################################################
+
+pepys:obs-zooms-IN-A001 a crmsci:S4_Single_Observation ;
+    rdfs:label "MALDI ZooMS screening acquisition of IN-A001 replicates (plate PSP-0011)"@en ;
+    crmsci:O8_observed pepys:IN-A001 ;
+    crm:P14_carried_out_by pepys:operator-vk ;
+    crm:P4_has_time-span pepys:ms-acquisition-time ;
+    codhmo:hasSourceRecord pepys:rec-zooms-G2 , pepys:rec-zooms-G15 , pepys:rec-zooms-H3 .
+
+pepys:operator-vk a crm:E21_Person ;
+    rdfs:label "Vaclav Kupricka"@en .
+
+pepys:ms-acquisition-time a crm:E52_Time-Span ;
+    rdfs:label "timsTOF fleX acquisition timestamp"@en ;
+    crm:P82a_begin_of_the_begin "2026-04-24T12:21:00"^^xsd:dateTime ;
+    crm:P82b_end_of_the_end "2026-04-24T12:21:00"^^xsd:dateTime .
+
+pepys:rec-zooms-G2 a codhmo:SourceRecord ;
+    codhmo:inStore "ZoomzPeak" ;
+    codhmo:inTable "ZOOMS_SPECTRA" ;
+    codhmo:storeSchemaVersion "0.1.0" ;
+    codhmo:hasKey pepys:k0-ds , pepys:k1-run , pepys:k2-f , pepys:k3-spot-g2 .
+
+pepys:rec-zooms-G15 a codhmo:SourceRecord ;
+    codhmo:inStore "ZoomzPeak" ;
+    codhmo:inTable "ZOOMS_SPECTRA" ;
+    codhmo:storeSchemaVersion "0.1.0" ;
+    codhmo:hasKey pepys:k0-ds , pepys:k1-run , pepys:k2-f , pepys:k3-spot-g15 .
+
+pepys:rec-zooms-H3 a codhmo:SourceRecord ;
+    codhmo:inStore "ZoomzPeak" ;
+    codhmo:inTable "ZOOMS_SPECTRA" ;
+    codhmo:storeSchemaVersion "0.1.0" ;
+    codhmo:hasKey pepys:k0-ds , pepys:k1-run , pepys:k2-f , pepys:k3-spot-h3 .
+
+pepys:k0-ds a codhmo:Key ; codhmo:keyName "dataset_id" ; codhmo:keyValue "CODICUM_BioMS_PSP0011" .
+pepys:k1-run a codhmo:Key ; codhmo:keyName "run" ; codhmo:keyValue "20260424-1221_TTF_013579_ONJ_VK_MC_20260423_CPH1004291_PSP0011" .
+pepys:k2-f a codhmo:Key ; codhmo:keyName "file_id" ; codhmo:keyValue "20260424-1221_TTF_013579_ONJ_VK_MC_20260423_CPH1004291_PSP0011.mzML" .
+pepys:k3-spot-g2 a codhmo:Key ; codhmo:keyName "id" ; codhmo:keyValue "G2" .
+pepys:k3-spot-g15 a codhmo:Key ; codhmo:keyName "id" ; codhmo:keyValue "G15" .
+pepys:k3-spot-h3 a codhmo:Key ; codhmo:keyName "id" ; codhmo:keyValue "H3" .
 
 #################################################################
 # Computational provenance (PLACEHOLDER values)

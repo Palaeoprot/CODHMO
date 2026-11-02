@@ -90,7 +90,6 @@ def test_broken_graph_fails(name, remove, add):
     assert not conforms, f"{name} should violate a MUST rule"
 
 
-@pytest.mark.xfail(reason="IN-A001 not yet sampled: sampler (crm:P14) and date (crm:P4) will exist after processing", strict=True)
 def test_pepys_instance_has_no_violations():
     ont = Graph().parse(ROOT / "ontology" / "codhmo.ttl")
     shapes = Graph().parse(ROOT / "shapes" / "codhmo-core-shapes.ttl")

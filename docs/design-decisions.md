@@ -1,6 +1,6 @@
 # CODHMO design decisions
 
-_Last updated: 2026-09-26 (D24–D34 accepted)_
+_Last updated: 2026-11-02 (IN-A001 laboratory provenance resolved, D24 run column added)_
 
 Working notes for the final documentation. Each entry records what was decided, the alternatives, and why. Source handover: *CODICUM Heritage Materials & AI Agent* (17 Sept 2026).
 
@@ -199,11 +199,11 @@ Shapes run against the **data and ontology merged** (`validate(data + ont, infer
 
 ## Open items
 - ~~Replace the synthetic source-record fixture with a real ZooMS row~~: real rows now exist in `data/vinas-caron-2023/` and `data/peters-2025/` (2026-09-26). The fixture stays as a minimal test; for key names see D24.
-- ZoomzPeak changes needed for D24/D33: a `run` column and a spectrum `id` column (mzPeak naming); a sample list separate from replicates (Z2); instrument taken from the paper when the files lack it (Z3); a record of spectra measured but not deposited (Z4).
+- ZoomzPeak changes needed for D24/D33: `run` column added to `ZOOMS_SPECTRA` schema in `odense_tracker.ingest_codhmo` (2026-11-02); native spectrum `id` column, sample list separate from replicates (Z2), instrument from paper/metadata (Z3, implemented in tracker), and record of spectra measured but not deposited (Z4).
 - Marker-set class for D28.
 - Palandri et al. 2024 (Zenodo 18772648): MA01-MA20 sample-to-fragment/location mapping requested from the author (2026-09-17); the Missale example holds one representative spine sample until then.
-- IN-A001 has not been sampled yet; its sampler, date and results will be added after processing, then tested with the researcher.
-- Real analytical values to replace the PLACEHOLDERs in the Pepys example.
+- ~~IN-A001 has not been sampled yet~~: Resolved 2026-11-02. Sample IN-A001 was sampled under INSULAR event SE0012 (2026-03-12), extracted in batch DB019 (2026-04-10) by Z. Fagernäs, spotted on plate PSP-0011 (wells G2, G15, H3; batch SB-0007, 2026-04-18), and acquired on a Bruker timsTOF fleX (2026-04-24, V. Kupricka). Spectral observations and ZoomzPeak SourceRecords (`CODICUM_BioMS_PSP0011`) are now recorded in `examples/pepys-IN-A001.ttl`, bringing the file into full SHACL conformance.
+- Bottom-up LC-MS/MS sequence search values to replace the PEP001 PLACEHOLDERs once search engine analysis of the raw spectra is completed.
 - Namespace IRI (`https://codicum.eu/ontology/codhmo#` is provisional).
 - PSI-MS/UNIMOD alignment for peptide and PTM properties.
 - Getty AAT matches for the material concepts.
